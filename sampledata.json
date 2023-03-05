@@ -1,0 +1,19 @@
+{
+    "name": "Wendy Wellesley",
+    "user_type": "rider",
+    "depart_time": "03/05/2023 10:30",
+    "origin_address": {
+        "street": "21 Wellesley College Road",
+        "city": "Wellesley",
+        "state": "MA",
+        "zip": "02481"
+    },
+    "destination_address": {
+        "street": "15 Sudbury St",
+        "city": "Boston",
+        "state": "MA",
+        "zip": "02203"
+    },
+    "desired_cost_min": 10,
+    "desired_cost_max": 25
+}
