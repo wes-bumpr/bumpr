@@ -29,9 +29,13 @@ def handle_carpool_update(event):
         # TODO: Use the FCM API to send a push notification
 
         # Send an email notification
-        body = 'A carpool match has been found!\n\nDetails:\nFrom: {}\nTo: {}\nDate: {}\nTime: {}\n'.format(
+        body1 = 'A carpool match has been found!\n\nDetails:\nFrom: {}\nTo: {}\nDate: {}\nTime: {}'.format(
             carpool_data['from'], carpool_data['to'], carpool_data['date'], carpool_data['time'])
-        msg.attach(MIMEText(body, 'plain'))
+        msg.attach(MIMEText(body1, 'plain'))
+        body2 = '\nCurrently there are: {} passengers out of {} seats.'.format(
+            carpool_data['numRiders'], carpool_data['maxSpace'])
+        msg.attach(MIMEText(body2, 'plain'))
+
         recipients = [carpool_data['driver_email'], carpool_data['passenger_email']]
         for recipient in recipients:
             msg['To'] = recipient
