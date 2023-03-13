@@ -1,16 +1,19 @@
 import firebase_admin
 from firebase_admin import credentials
+
+import json
 from firebase_admin import db
+
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # Set up Firebase credentials
-cred = credentials.Certificate('path/to/firebase/credentials.json')
-firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-firebase-database-url.firebaseio.com'})
+cred = credentials.Certificate('/path/to/bumpr-firebase-service-acckey.json')
+firebase_admin.initialize_app(cred)
 
 # Get a reference to the carpool data
-carpool_ref = db.reference('/carpools')
+carpool_ref = db.reference('/matches')
 
 # Set up email credentials
 email_address = 'your-email-address@example.com'
