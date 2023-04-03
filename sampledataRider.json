@@ -15,9 +15,7 @@
         "state": "MA",
         "zip": "02203"
     },
-    "desired_cost_min": 10,
     "desired_cost_max": 25,
-    "num_people_in_car_desired": 3,
     "ride_share": true,
     "personal_car": false
 }
