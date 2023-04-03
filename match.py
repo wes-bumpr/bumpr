@@ -5,7 +5,8 @@
 # run an instance of a match for each user that is not matched yet
 # TODO: need a list of all users that requested rides from Firebase
 
-import numpy as np
+import heapq # for priority queue
+import numpy as np # for various path calculations
 from geopy.geocoders import Nominatim # for Open Street Map, to convert addresses to numerical values
 
 # Initialize the geolocator with the OpenStreetMap provider
@@ -15,26 +16,30 @@ class Match:
     def __init__(self, currUserID):
         self.userID = currUserID # import a user from Firebase
         self.priorityQueue = []
-        # user_list = #TODO: get from firebase
+        # a list of users not matched yet
+        # self.user_list = #TODO: get from firebase
 
         # geocode give us longitude and latitude in degrees
         #TODO: need to format the addresses in firebase json file for riders and drivers for OpenStreetMap
-        # origin_address = geolocator.geocode(address) #TODO: get address from firebase
-        # destination_address = geolocator.geocode(address) #TODO: get address from firebase
+        # self.origin_address = geolocator.geocode(address) #TODO: get address from firebase
+        # self.destination_address = geolocator.geocode(address) #TODO: get address from firebase
         
-        # depart_time = #TODO: get from firebase
-        # desired_cost_max = #TODO: get from firebase
-        # user_type = #TODO: get from firebase
-
+        # self.depart_time = #TODO: get from firebase
+        # self.desired_cost_max = #TODO: get from firebase
+        # self.user_type = #TODO: get from firebase
 
 
     # function to match people based on priority queue
     def match_users():
-        # using the priority queue, match people with this current user
-        # based on cost and car capacity (if driver)
-        for otherUser in user_list:
-            if this.compareTo(otherUser) > 0: # this user has higher priority 
+        match_pool = []
 
+        for otherUser in user_list:
+            otherUser_score = this.matchScore(otherUser)
+            # note: need to negate the scores for queue to have highest scores at top
+            heapq.heappush(this.priorityQueue, (-otherUser_score, otherUser.userID))
+
+        #TODO: using the priority queue, match this user to the users based on car capacity or on desired cost 
+        return match_pool
 
     # Create a match score for every other user relative to this user 
     # and use this to create a priority queue for this user
