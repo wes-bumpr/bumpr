@@ -2,12 +2,19 @@
 # Create a Match Class, where we match people based on the information we get
 # from the data that Ride Request API (ex. sampledata-rider.json) imports (put into) into Firebase
 
-# run an instance of a match for each user that is not matched yet
-# TODO: need a list of all users that requested rides from Firebase
+# Note: Run an instance of a match for each user that is not matched yet
 
 import heapq # for priority queue
 import numpy as np # for various path calculations
 from geopy.geocoders import Nominatim # for Open Street Map, to convert addresses to numerical values
+import firebase_admin
+from firebase_admin import firestore
+cred = credentials.Certificate('/path/to/bumpr-firebase-service-acckey.json')
+firebase_admin.initialize_app(cred)
+
+# Initialize to retrieve data from Firebase - ride-request collection
+db = firestore.client()
+riderequests_ref = db.collection('ride-requests')
 
 # Initialize the geolocator with the OpenStreetMap provider
 geolocator = Nominatim(user_agent="my-application") #TODO: set to correct app (bumpr)
@@ -16,17 +23,23 @@ class Match:
     def __init__(self, currUserID):
         self.userID = currUserID # import a user from Firebase
         self.priorityQueue = []
-        # a list of users not matched yet
-        # self.user_list = #TODO: get from firebase
-
-        # geocode give us longitude and latitude in degrees
-        #TODO: need to format the addresses in firebase json file for riders and drivers for OpenStreetMap
-        # self.origin_address = geolocator.geocode(address) #TODO: get address from firebase
-        # self.destination_address = geolocator.geocode(address) #TODO: get address from firebase
-        
-        # self.depart_time = #TODO: get from firebase
-        # self.desired_cost_max = #TODO: get from firebase
-        # self.user_type = #TODO: get from firebase
+        # a list of users not matched yet excluding this user
+        self.user_list = []
+        # get all the documents in the 'ride-requests' collection in Firebase
+        requests_doc = riderequests_ref.get()
+        for request in requests_doc:
+            user_dict = request.todict()
+            if user_dict["user_ID"] != self.userID:
+                self.user_list.append(user_dict)
+            else: # if it is this user
+                # geocode give us longitude and latitude in degrees
+                #TODO: need to format the addresses in firebase json file for riders and drivers for OpenStreetMap
+                self.origin_address = geolocator.geocode(user_dict["origin_address"]) 
+                self.destination_address = geolocator.geocode(user_dict["destination_address"]) 
+                
+                self.depart_time = user_dict["depart_time"] #TODO: need to check time format (units)
+                self.desired_cost_max = user_dict["desired_cost_max"] 
+                self.user_type = user_dict["user_type"]
 
 
     # function to match people based on priority queue
@@ -54,9 +67,6 @@ class Match:
         angle_threshold = 20 #TODO: need more accurate angle in degrees
         depart_time_threshold = 1800 #TODO: need to get units of time diff (assume seconds for now)
         desired_cost_threshold = 10 # assume $10 difference in desired cost for now
-
-        #TODO: need to get length difference of address locations 
-        #TODO: these points need to be numerical before stored in firebase for matching API
 
         # get absolute value difference to see if they are similar enough
         # need to first group users departing from similar origin locations: get length of path diff between users' origins
