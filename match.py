@@ -37,6 +37,7 @@ class Match:
             otherUser_score = this.matchScore(otherUser)
             # note: need to negate the scores for queue to have highest scores at top
             heapq.heappush(this.priorityQueue, (-otherUser_score, otherUser.userID))
+        
 
         #TODO: using the priority queue, match this user to the users based on car capacity or on desired cost 
         return match_pool
@@ -75,9 +76,9 @@ class Match:
             # first priorities get 10 points
             #TODO: adjust the point system to get more accurate matches
             if origin_location_diff <= location_threshold:
-                match_score += 10*(10-origin_location_diff)/10
+                match_score += 10-origin_location_diff #adds more to match_score if the difference is smaller (max is 10 points) 
             if dest_angle <= angle_threshold:
-                match_score += 10*((90-dest_angle)/90)
+                match_score += 10*((90-dest_angle)/90) #adds more to match_score if the dest_angle is smaller (max is 10 points) ...etc.
             if depart_time_diff <= depart_time_threshold:
                 match_score += 10*(1800-depart_time_diff)/1800
             # second priorities get 5 points
