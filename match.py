@@ -50,8 +50,8 @@ class Match:
             # 1. start/end locations & depart time
             # *create queue (make sure not to match driver with driver - skip over that user)
         match_score = 0
-        location_threshold = 1 #TODO: need to get units of the location len diff (assume 1 mile for now)
-        angle_threshold = 20 #TODO: need more accurate angle in degrees
+        location_threshold = 10 #TODO: need to get units of the location len diff (assume 1 mile for now) #originally 1
+        angle_threshold = 90 #TODO: need more accurate angle in degrees
         depart_time_threshold = 1800 #TODO: need to get units of time diff (assume seconds for now)
         desired_cost_threshold = 10 # assume $10 difference in desired cost for now
 
@@ -75,11 +75,11 @@ class Match:
             # first priorities get 10 points
             #TODO: adjust the point system to get more accurate matches
             if origin_location_diff <= location_threshold:
-                match_score += 10
+                match_score += 10*(10-origin_location_diff)/10
             if dest_angle <= angle_threshold:
-                match_score += 10
+                match_score += 10*((90-dest_angle)/90)
             if depart_time_diff <= depart_time_threshold:
-                match_score += 10
+                match_score += 10*(1800-depart_time_diff)/1800
             # second priorities get 5 points
             if desired_cost_diff <= desired_cost_threshold:
                 match_score += 5
