@@ -30,6 +30,9 @@ class Match:
 
 
     # function to match people based on priority queue
+    #for riders, match based on split costs (desired cost/number of users)
+    #for drivers, match based on car capacity
+
     def match_users():
         match_pool = []
 
