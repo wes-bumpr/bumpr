@@ -12,21 +12,37 @@ from geopy.geocoders import Nominatim # for Open Street Map, to convert addresse
 # Initialize the geolocator with the OpenStreetMap provider
 geolocator = Nominatim(user_agent="my-application") #TODO: set to correct app (bumpr)
 
+import pyrebase
+
+config = {
+  "apiKey": "AIzaSyAhw3p7cqnaQmczTxfUAts4lLfMLWJYG5Y",
+  "authDomain": "domain", #find
+  "databaseURL": "https://bumpr-db1f3-default-rtdb.firebaseio.com/", #from realtime database, need to check
+  "storageBucket": " " #find
+}
+
+firebase = pyrebase.initialize_app(config)
+firebase_db = firebase.database()
 class Match:
     def __init__(self, currUserID):
         self.userID = currUserID # import a user from Firebase
         self.priorityQueue = []
         # a list of users not matched yet
-        # self.user_list = #TODO: get from firebase
+        # self.user_list = firebase_db.child("riderequest").get().val() #TODO: get from firebase  need to check for accuracy
 
         # geocode give us longitude and latitude in degrees
         #TODO: need to format the addresses in firebase json file for riders and drivers for OpenStreetMap
-        # self.origin_address = geolocator.geocode(address) #TODO: get address from firebase
+        address = self.user_list[self.userID]["origin_address"]["street"] + ", " + self.user_list[self.userID]["origin_address"]["city"] + ", " + self.user_list[self.userID]["origin_address"]["state"] + " " + self.user_list[self.userID]["origin_address"]["zip"]
+
+        self.origin_address= geolocator.geocode(address) #TODO: get address from firebase need to check for address accuracy
         # self.destination_address = geolocator.geocode(address) #TODO: get address from firebase
         
         # self.depart_time = #TODO: get from firebase
         # self.desired_cost_max = #TODO: get from firebase
         # self.user_type = #TODO: get from firebase
+        self.depart_time =self.user_list[self.userID]["depart_time"]
+        self.desired_cost_max =self.user_list[self.userID]["desired_cost_max"]
+        self.user_type =self.user_list[self.userID]["user_type"]
 
 
     # function to match people based on priority queue
