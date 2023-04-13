@@ -28,7 +28,7 @@ class Match:
         self.userID = currUserID # import a user from Firebase
         self.priorityQueue = []
         # a list of users not matched yet
-        # self.user_list = firebase_db.child("riderequest").get().val() #TODO: get from firebase  need to check for accuracy
+        self.user_list = firebase_db.child("riderequest").get().val() #TODO: get from firebase  need to check for accuracy
 
         # geocode give us longitude and latitude in degrees
         #TODO: need to format the addresses in firebase json file for riders and drivers for OpenStreetMap
@@ -43,6 +43,7 @@ class Match:
         self.depart_time =self.user_list[self.userID]["depart_time"]
         self.desired_cost_max =self.user_list[self.userID]["desired_cost_max"]
         self.user_type =self.user_list[self.userID]["user_type"]
+        self.number_people = self.user_list[self.userID]["user_type"] #use this instead of desired cost or capacity
 
 
     # function to match people based on priority queue
