@@ -51,14 +51,17 @@ class Match:
     #use if statements
 
     def match_users():
-        match_pool = []
+        match_pool = {}
 
         for otherUser in user_list:
             otherUser_score = this.matchScore(otherUser)
             # note: need to negate the scores for queue to have highest scores at top
             heapq.heappush(this.priorityQueue, (-otherUser_score, otherUser.userID))
         
-
+        
+        match_pool[rideID] = [self.userID]
+        for i in range(capacity-1):
+            match_pool[rideID].append(heapq.heappop())
         #TODO: using the priority queue, match this user to the users based on car capacity or on desired cost 
         return match_pool
 
