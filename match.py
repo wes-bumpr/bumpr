@@ -78,7 +78,7 @@ class Match:
         location_threshold = 10 #TODO: need to get units of the location len diff (assume 1 mile for now) #originally 1
         angle_threshold = 90 #TODO: need more accurate angle in degrees
         depart_time_threshold = 1800 #TODO: need to get units of time diff (assume seconds for now)
-        desired_carpoolers_threshold = 10 # assume this difference in desired number of carpoolers now
+        desired_carpoolers_threshold = 1 # assume this difference in desired number of carpoolers now
 
         #TODO: need to get length difference of address locations 
         #TODO: these points need to be numerical before stored in firebase for matching API
