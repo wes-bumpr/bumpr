@@ -43,7 +43,7 @@ class Match:
         self.depart_time =self.user_list[self.userID]["depart_time"]
         self.desired_cost_max =self.user_list[self.userID]["desired_cost_max"]
         self.user_type =self.user_list[self.userID]["user_type"]
-        self.number_people = self.user_list[self.userID]["user_type"] #use this instead of desired cost or capacity
+        self.number_desired_carpoolers = self.user_list[self.userID]["user_type"] #use this instead of desired cost or capacity
 
 
     # function to match people based on priority queue
@@ -61,7 +61,7 @@ class Match:
         
         
         match_pool[rideID] = [self.userID]
-        for i in range(capacity-1):
+        for i in range(self.number_desired_carpoolers):
             match_pool[rideID].append(heapq.heappop())
         #TODO: using the priority queue, match this user to the users based on car capacity or on desired cost 
         return match_pool
@@ -78,7 +78,7 @@ class Match:
         location_threshold = 10 #TODO: need to get units of the location len diff (assume 1 mile for now) #originally 1
         angle_threshold = 90 #TODO: need more accurate angle in degrees
         depart_time_threshold = 1800 #TODO: need to get units of time diff (assume seconds for now)
-        desired_cost_threshold = 10 # assume $10 difference in desired cost for now
+        desired_carpoolers_threshold = 10 # assume this difference in desired number of carpoolers now
 
         #TODO: need to get length difference of address locations 
         #TODO: these points need to be numerical before stored in firebase for matching API
@@ -93,7 +93,7 @@ class Match:
         dest_angle = calculate_angle(this_user_path, other_user_path)
         # 2nd priorities: travel time and desired cost (may not need desired cost?)
         depart_time_diff = abs(this.depart_time - otherUser.depart_time)
-        desired_cost_diff = abs(this.desired_cost_max - otherUser.desired_cost_max)
+        desired_carpoolers_diff = abs(this.number_desired_carpoolers - otherUser.number_desired_carpoolers)
 
         # don't match a driver with a driver
         if not (this.user_type == "driver" and otherUser.user_type == "driver"):
@@ -106,7 +106,7 @@ class Match:
             if depart_time_diff <= depart_time_threshold:
                 match_score += 10*(1800-depart_time_diff)/1800
             # second priorities get 5 points
-            if desired_cost_diff <= desired_cost_threshold:
+            if desired_carpoolers_diff <= desired_carpoolers_threshold:
                 match_score += 5
 
         return match_score 
