@@ -2,12 +2,19 @@
 # Create a Match Class, where we match people based on the information we get
 # from the data that Ride Request API (ex. sampledata-rider.json) imports (put into) into Firebase
 
-# run an instance of a match for each user that is not matched yet
-# TODO: need a list of all users that requested rides from Firebase
+# Note: Run an instance of a match for each user that is not matched yet
 
 import heapq # for priority queue
 import numpy as np # for various path calculations
 from geopy.geocoders import Nominatim # for Open Street Map, to convert addresses to numerical values
+import firebase_admin
+from firebase_admin import firestore
+cred = credentials.Certificate('/path/to/bumpr-firebase-service-acckey.json')
+firebase_admin.initialize_app(cred)
+
+# Initialize to retrieve data from Firebase - ride-request collection
+db = firestore.client()
+riderequests_ref = db.collection('ride-requests')
 
 # Initialize the geolocator with the OpenStreetMap provider
 geolocator = Nominatim(user_agent="my-application") #TODO: set to correct app (bumpr)
@@ -27,6 +34,7 @@ class Match:
     def __init__(self, currUserID):
         self.userID = currUserID # import a user from Firebase
         self.priorityQueue = []
+
         # a list of users not matched yet
         self.user_list = firebase_db.child("riderequest").get().val() #TODO: get from firebase  need to check for accuracy
 
@@ -44,6 +52,7 @@ class Match:
         self.desired_cost_max =self.user_list[self.userID]["desired_cost_max"]
         self.user_type =self.user_list[self.userID]["user_type"]
         self.number_desired_carpoolers = self.user_list[self.userID]["user_type"] #use this instead of desired cost or capacity
+
 
 
     # function to match people based on priority queue
@@ -79,9 +88,6 @@ class Match:
         angle_threshold = 90 #TODO: need more accurate angle in degrees
         depart_time_threshold = 1800 #TODO: need to get units of time diff (assume seconds for now)
         desired_carpoolers_threshold = 1 # assume this difference in desired number of carpoolers now
-
-        #TODO: need to get length difference of address locations 
-        #TODO: these points need to be numerical before stored in firebase for matching API
 
         # get absolute value difference to see if they are similar enough
         # need to first group users departing from similar origin locations: get length of path diff between users' origins
