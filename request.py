@@ -1,37 +1,21 @@
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials
+from firebase_admin import firestore
 
 cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
 firebase_admin.initialize_app(cred)
 
-# Initialize to retrieve data from Firebase - ride-request collection
 db = firestore.client()
-collection_name = "ride-requests"
 
-# Query the collection
-ride_requests = db.collection(collection_name).stream()
+# for record in data:
+#     doc_ref = db.collection(u"ride-requests").document(record["ride_request_ID"])
+#     doc_ref.set(record)
 
+ride_requests_ref = db.collection(u"ride-requests")
+docs = ride_requests_ref.stream()
 
-
-# Initialize the geolocator with the OpenStreetMap provider
-# geolocator = Nominatim(user_agent="my-application") #TODO: set to correct app (bumpr)
-
-# import pyrebase
-
-# config = {
-#   "apiKey": "AIzaSyAhw3p7cqnaQmczTxfUAts4lLfMLWJYG5Y",
-#   "authDomain": "domain", #find
-#   "databaseURL": "https://bumpr-db1f3-default-rtdb.firebaseio.com/", #from realtime database, need to check
-#   "storageBucket": " " #find
-# }
-
-#  firebase = pyrebase.initialize_app(config)
-#  firebase_db = firebase.database()
-data_list = []
-for request in ride_requests:
-    data = request
-    data_list.append(data)
-print(data_list)
+for doc in docs:
+    print(f'{doc.id} => {doc.to_dict()}')
 
 class Request:
     def __init__(self, request_document_ID):
