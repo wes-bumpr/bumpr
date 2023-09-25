@@ -31,6 +31,7 @@ config = {
 firebase = pyrebase.initialize_app(config)
 firebase_db = firebase.database()
 
+# TODO: Clear document up with new request.py api
 class Match:
     def __init__(self, currUserID):
         self.userID = currUserID # import a user from Firebase

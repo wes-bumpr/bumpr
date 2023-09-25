@@ -34,7 +34,14 @@ for request in ride_requests:
 print(data_list)
 
 class Request:
+    """
+    Ride request objects retrieved from database
+    """
     def __init__(self, request_document_ID):
+        """
+        Initiallizes request objects based on its storage in database
+        :param request_document_ID: Identifier to get the request object
+        """
         self.priorityQueue = []
 
         # a list of users not matched yet
@@ -59,6 +66,6 @@ class Request:
 
         print("Adress",address)
 
-
+        #TODO: getters & setters
 
 #obj = Request("Wmc7r9Jwj3KvQvW3Z6gV")
