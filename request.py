@@ -21,9 +21,9 @@ db = firestore.client()
 #     print(f'{doc.id} => {doc.to_dict()}')
 # print(next(docs).to_dict()) # get first doc
 # Create a reference to the document
-doc_ref = db.collection("ride-requests").document("Wmc7r9Jwj3KvQvW3Z6gV")
-# Get the document data
-doc = doc_ref.get()
+# doc_ref = db.collection("ride-requests").document("Wmc7r9Jwj3KvQvW3Z6gV")
+# # Get the document data
+# doc = doc_ref.get()
 # print(doc.to_dict())
 
 class Request:
@@ -125,3 +125,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# newest
