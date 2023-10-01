@@ -2,29 +2,10 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-from match import firebase_db
-
 cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
-
-# put data
-# for record in data:
-#     doc_ref = db.collection(u"ride-requests").document(record["ride_request_ID"])
-#     doc_ref.set(record)
-
-# get data
-# ride_requests_ref = db.collection(u"ride-requests")
-# docs = ride_requests_ref.stream()
-# for doc in docs:
-#     print(f'{doc.id} => {doc.to_dict()}')
-# print(next(docs).to_dict()) # get first doc
-# Create a reference to the document
-# doc_ref = db.collection("ride-requests").document("Wmc7r9Jwj3KvQvW3Z6gV")
-# # Get the document data
-# doc = doc_ref.get()
-# print(doc.to_dict())
 
 class Request:
     """
@@ -49,6 +30,13 @@ class Request:
         zip, state, city, street.
         """
         return self.request_doc["destination_address"]
+
+    def get_origin_address(self):
+        """
+        Returns a dictionary of the request's destination address:
+        zip, state, city, street.
+        """
+        return self.request_doc["origin_address"]
     
     def get_destination_time(self):
         """
