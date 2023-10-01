@@ -30,36 +30,11 @@ class Request:
     """
     Ride request objects retrieved from database
     """
-    def __init__(self, request_document_ID):
-        """
-        Initiallizes request objects based on its storage in database
-        :param request_document_ID: Identifier to get the request object
-        """
-        self.priorityQueue = []
-
-        # a list of users not matched yet
-        self.request_list = firebase_db.child("ride-requests").get().val() #TODO: get from firebase need to check for accuracy
-
-        # ride request ID
-        self.rideID = self.request_list[request_document_ID]["ride_request_ID"]
-
-        # geocode gives us longitude and latitude in degrees
-        #TODO: need to format the addresses in firebase json file for riders and drivers for OpenStreetMap
-        address = self.request_list[request_document_ID]["origin_address"]["street"] + ", " 
-        + self.request_list[request_document_ID]["origin_address"]["city"] + ", " 
-        + self.request_list[request_document_ID]["origin_address"]["state"] + " " 
-        + self.request_list[request_document_ID]["origin_address"]["zip"]
-        # self.origin_address= geolocator.geocode(address) #TODO: get address from firebase need to check for address accuracy
-        # self.destination_address = geolocator.geocode(address) #TODO: get address from firebase
-        
-        self.depart_time = self.request_list[request_document_ID]["depart_time"]
-        self.desired_cost_max = self.request_list[request_document_ID]["desired_cost_max"]
-        self.user_type = self.request_list[request_document_ID]["user_type"]
-        self.number_desired_carpoolers = self.request_list[request_document_ID]["user_type"] #use this instead of desired cost or capacity
-
-        print("Adress",address)
-
-        #TODO: getters & setters
+    def __init__(self, request_doc_ID):
+        # get request doc from ride-requests collection from Firebase
+        self.ride_requests_ref = db.collection(u"ride-requests").document(request_doc_ID)
+        # convert one request data from ride-request collection to dictionary for each access
+        self.request_doc = self.ride_requests_ref.get().to_dict()
 
     def get_depart_time(self):
         """
