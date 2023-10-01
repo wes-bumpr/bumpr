@@ -2,6 +2,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+from match import firebase_db
+
 cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
 firebase_admin.initialize_app(cred)
 
@@ -36,7 +38,7 @@ class Request:
         self.priorityQueue = []
 
         # a list of users not matched yet
-        self.request_list = firebase_db.child("ride-request").get().val() #TODO: get from firebase need to check for accuracy
+        self.request_list = firebase_db.child("ride-requests").get().val() #TODO: get from firebase need to check for accuracy
 
         # ride request ID
         self.rideID = self.request_list[request_document_ID]["ride_request_ID"]
