@@ -7,37 +7,15 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-# put data
-# for record in data:
-#     doc_ref = db.collection(u"ride-requests").document(record["ride_request_ID"])
-#     doc_ref.set(record)
-
-# get data
-# ride_requests_ref = db.collection(u"ride-requests")
-# docs = ride_requests_ref.stream()
-# for doc in docs:
-#     print(f'{doc.id} => {doc.to_dict()}')
-# print(next(docs).to_dict()) # get first doc
-# Create a reference to the document
-# doc_ref = db.collection("ride-requests").document("Wmc7r9Jwj3KvQvW3Z6gV")
-# # Get the document data
-# doc = doc_ref.get()
-# print(doc.to_dict())
-
 class Request:
+    """
+    Ride request objects retrieved from database
+    """
     def __init__(self, request_doc_ID):
         # get request doc from ride-requests collection from Firebase
         self.ride_requests_ref = db.collection(u"ride-requests").document(request_doc_ID)
         # convert one request data from ride-request collection to dictionary for each access
         self.request_doc = self.ride_requests_ref.get().to_dict()
-
-
-    def get_origin_address(self):
-        """
-        Returns a dictionary of the request's origin address:
-        zip, state, city, street.
-        """
-        return self.request_doc["origin_address"]
 
     def get_depart_time(self):
         """
@@ -52,6 +30,13 @@ class Request:
         zip, state, city, street.
         """
         return self.request_doc["destination_address"]
+
+    def get_origin_address(self):
+        """
+        Returns a dictionary of the request's destination address:
+        zip, state, city, street.
+        """
+        return self.request_doc["origin_address"]
     
     def get_destination_time(self):
         """
@@ -59,13 +44,10 @@ class Request:
         of request's destination time (time they need to get there)
         """
         return self.request_doc["destination_time"]
-    
-    def get_desired_num_carpoolers(self):
-        """
-        Returns integer of the request's desired number
-        of people they want to carpool with.
-        """
-        return self.request_doc["desired_num_carpoolers"]
+
+    def get_total_num_people_traveling(self):
+        return self.request_doc["total_num_people_traveling"]
+
 
     def get_ride_share(self):
         """
