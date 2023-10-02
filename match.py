@@ -7,9 +7,11 @@ import heapq  # for priority queue
 import numpy as np  # for various path calculations
 import unittest
 from request import *
+from datetime import datetime
 
+# for geo-related calculations
 # command line: pip install geopy
-# Initialize the geolocator with the OpenStreetMap provider
+from geopy import distance
 from geopy.geocoders import Nominatim
 
 geolocator = Nominatim(user_agent="bumprTest")  # TODO: set to correct app (bumpr)
@@ -20,65 +22,98 @@ class Match:
     """
     Creates Single Match (?) by drawing out pairs from current unmatched list
     """
-    def __init__(self, currUserID):
-        # Necessary Info: unmatched list
+
+    def __init__(self, request_id1, request_id2):
+
+        self.request_id1 = request_id1
+        self.request_id2 = request_id2
+
+        self.request1 = Request(request_id1)
+        self.request2 = Request(request_id2)
+
+        self.request1_origin_geo_coordinates, self.request2_origin_geo_coordinates, self.request1_destination_geo_coordinates, self.request2_destination_geo_coordinates = self.get_geocode_points()
         pass
 
-    def match_users(self):
-        """
-        Matches other users to this user
-        based on other users' match scores
-        relative to this user. 
-        """
-        match_pool = {}
-        for otherUser in self.user_list:
-            otherUser_score = self.matchScore(otherUser)
-            # note: need to negate the scores for queue to have highest scores at top
-            heapq.heappush(self.priorityQueue, (-otherUser_score, otherUser.userID))
 
-        match_pool[self.rideID] = [self.userID]
-        for _ in range(self.number_desired_carpoolers):
-            match_pool[self.rideID].append(heapq.heappop())
-        # TODO: using the priority queue, match this user to the users based on car capacity AND/OR on desired cost
-        return match_pool
+    def get_geocode_points(self):
+        """
+        extract geolocation information and process it to (latitude, longitude) format
+        :return: geo coordinate representations or request 1 and request 2 origins and destinations
+        """
+        # geocode: general geo information storage
+        request1_origin_geocode = geolocator.geocode(self.request1.get_origin_address())
+        request2_origin_geocode = geolocator.geocode(self.request2.get_origin_address())
+        request1_destination_geocode = geolocator.geocode(self.request1.get_destination_address())
+        request2_destination_geocode = geolocator.geocode(self.request2.get_destination_address())
+        # geo_coordinates: in the form of latitude, longitude
+        request1_origin_geo_coordinates = (request1_origin_geocode.latitude, request1_origin_geocode.longitude)
+        request2_origin_geo_coordinates = (request2_origin_geocode.latitude, request2_origin_geocode.longitude)
+        request1_destination_geo_coordinates = (request1_destination_geocode.latitude, request1_destination_geocode.longitude)
+        request2_destination_geo_coordinates = (request2_destination_geocode.latitude, request2_destination_geocode.longitude)
+        return request1_origin_geo_coordinates, request2_origin_geo_coordinates, request1_destination_geo_coordinates, request2_destination_geo_coordinates
 
-    def matchScore(self, otherUser):
+    def match_score(self):
         """
         Create a match score for every other user relative to this user 
         and use this to create a priority queue for this user
         Note: each user has their own priority queue
-        Returns: otherUser matching score relative to this user
+        Returns: request_id1, request_id2,
         """
         match_score = 0
-        location_threshold = 10  # TODO: need to get units of the location len diff (assume 1 mile for now) #originally 1
-        angle_threshold = 90  # TODO: need more accurate angle in degrees
-        depart_time_threshold = 1800  # TODO: need to get units of time diff (assume seconds for now)
-        desired_carpoolers_threshold = 1  # assume this difference in desired number of carpoolers now
+        origin_location_threshold = 0.5  # in miles
+        angle_threshold = 90 # in degrees
+        depart_time_threshold = 3600  # in seconds
+        default_max_carpoolers = 4  # in person
 
-        # get absolute value difference to see if they are similar enough
-        # need to first group users departing from similar origin locations: get length of path diff between users' origins
-        origin_location_diff = np.linalg.norm(self.calculate_path(self.origin_address, otherUser.origin_address))
-        # angle diff shows us how far their destinations are from each other & if
-        # users are going in relatively same direction
-        this_user_path = self.calculate_path(self.origin_address, self.destination_address)
-        other_user_path = self.calculate_path(otherUser.origin_address, otherUser.destination_address)
-        dest_angle = self.calculate_angle(this_user_path, other_user_path)
-        # 2nd priorities: travel time and desired cost (may not need desired cost?)
-        depart_time_diff = abs(self.depart_time - otherUser.depart_time)
-        desired_carpoolers_diff = abs(self.number_desired_carpoolers - otherUser.number_desired_carpoolers)
+        # 1st priority: carpoolers limit (either works or doesn't)
+        # If below limit, continue to other criteria. If not, return score of 0.
+        if self.request1.get_total_num_people_traveling() + self.request2.get_total_num_people_traveling() > default_max_carpoolers:
+            return self.request_id1, self.request_id2, 0
 
-        # don't match a driver with a driver
-        if not (self.user_type == "driver" and otherUser.user_type == "driver"):
-            # TODO: adjust the point system to get more accurate matches
-            if origin_location_diff <= location_threshold:
-                match_score += 10 - origin_location_diff  # adds more to match_score if the difference is smaller (max is 10 points)
-            if dest_angle <= angle_threshold:
-                match_score += 10 * ((
-                                             90 - dest_angle) / 90)  # adds more to match_score if the dest_angle is smaller (max is 10 points) ...etc.
-            if depart_time_diff <= depart_time_threshold:
-                match_score += 10 * (1800 - depart_time_diff) / 1800
-            if desired_carpoolers_diff <= desired_carpoolers_threshold:
-                match_score += 5
+        # 2nd priority: depart time difference
+        date_format = "%m/%d/%Y %H:%M"
+        request1_depart_time = datetime.strptime(self.request1.get_depart_time(), date_format)
+        request2_depart_time = datetime.strptime(self.request2.get_depart_time(), date_format)
+        depart_time_diff = abs(request1_depart_time - request2_depart_time).total_seconds()
+        if depart_time_diff > depart_time_threshold:
+            return self.request_id1, self.request_id2, 0
+        else:
+            pass
+
+        # 3rd priority: origin location difference
+        origin_location_diff = distance.distance(self.request1_origin_geo_coordinates, self.request2_origin_geo_coordinates).miles
+        # print("location_diff", origin_location_diff)
+        if origin_location_diff > origin_location_threshold:
+            return self.request_id1, self.request_id2, 0
+        else:
+            pass
+
+        # 4th priority: path angle (whether destinations are along the same route)
+        # helper: find_angle()   -> 0 -> return self.request_id1, self.request_id2, 0 too far
+        request1_path = calculate_path(self.request1_origin_geo_coordinates, self.request1_destination_geo_coordinates)
+        request2_path = calculate_path(self.request2_origin_geo_coordinates, self.request2_destination_geo_coordinates)
+        path_angles = calculate_angle(request1_path, request2_path)
+        if path_angles > angle_threshold:
+            return self.request_id1, self.request_id2, 0
+        else:
+            pass
+
+
+        # depart_time_diff = abs(self.depart_time - otherUser.depart_time)
+        # desired_carpoolers_diff = abs(self.number_desired_carpoolers - otherUser.number_desired_carpoolers)
+        #
+        # # don't match a driver with a driver
+        # if not (self.user_type == "driver" and otherUser.user_type == "driver"):
+        #     # TODO: adjust the point system to get more accurate matches
+        #     if origin_location_diff <= location_threshold:
+        #         match_score += 10 - origin_location_diff  # adds more to match_score if the difference is smaller (max is 10 points)
+        #     if dest_angle <= angle_threshold:
+        #         match_score += 10 * ((
+        #                                      90 - dest_angle) / 90)  # adds more to match_score if the dest_angle is smaller (max is 10 points) ...etc.
+        #     if depart_time_diff <= depart_time_threshold:
+        #         match_score += 10 * (1800 - depart_time_diff) / 1800
+        #     if desired_carpoolers_diff <= desired_carpoolers_threshold:
+        #         match_score += 5
 
         return match_score
 
@@ -87,12 +122,14 @@ def calculate_path(origin, destination):
     """
     Helper function: calculate path line of users origin to dest points
     for simplicity, we assume all paths are straight lines (or else we need to sum the integrals eek)
-    :param: point1 and point2. Pre-processed geocode information
+    :param: origin and destination. Pre-processed tuples of (latitude, longitude)
     :return: line between two points
     """
-    # Get the latitude and longitude of each location
-    lat1, lon1 = origin.latitude, origin.longitude
-    lat2, lon2 = destination.latitude, destination.longitude
+    # # Get the latitude and longitude of each location
+    # lat1, lon1 = origin.latitude, origin.longitude
+    # lat2, lon2 = destination.latitude, destination.longitude
+    lat1, lon1 = origin
+    lat2, lon2 = destination
 
     # Convert the latitude and longitude values to radians
     lat1 = np.deg2rad(lat1)
@@ -148,26 +185,32 @@ def calculate_angle(line1, line2):
 
 
 def main():
-    ## test geolocator - input locations ##
-    loc1 = geolocator.geocode({'zip': '02453', 'state': 'MA', 'city': 'Waltham', 'street': '415 South St'})
-    loc2 = geolocator.geocode({'zip': '02481', 'state': 'MA', 'city': 'Wellesley',
-                               'street': '106 Central Street'})  # 21 Wellesley College Rd returns no result
-    loc3 = geolocator.geocode({'zip': '02139', 'state': 'MA', 'city': 'Cambridge',
-                               'street': '77 Massachusetts Ave'})
-    # print(loc1)
-    # print(loc2)
-    # print(loc3)
-    # print(loc2.latitude)
-
-    ## test path calculation - returns np-array ##
-    # print(calculate_path(loc1, loc2))
-
-    ## test angle calculation ##
-    # path1 = calculate_path(loc2, loc1)
-    # path2 = calculate_path(loc2, loc3)
-    # path3 = calculate_path(loc3, loc2)
+    # ## test geolocator - input locations ##
+    # loc1 = geolocator.geocode({'zip': '02453', 'state': 'MA', 'city': 'Waltham', 'street': '415 South St'})
+    # loc2 = geolocator.geocode({'zip': '02481', 'state': 'MA', 'city': 'Wellesley',
+    #                            'street': '106 Central Street'})  # 21 Wellesley College Rd returns no result
+    # loc3 = geolocator.geocode({'zip': '02139', 'state': 'MA', 'city': 'Cambridge',
+    #                            'street': '77 Massachusetts Ave'})
+    # loc1_geo_coordinates = (loc1.latitude, loc1.longitude)
+    # loc2_geo_coordinates = (loc2.latitude, loc2.longitude)
+    # loc3_geo_coordinates = (loc3.latitude, loc3.longitude)
+    # # print(loc1)
+    # # print(loc2)
+    # # print(loc3)
+    # # print(loc2.latitude)
+    #
+    # ## test path calculation - returns np-array ##
+    # path1 = calculate_path(loc2_geo_coordinates, loc1_geo_coordinates)
+    # path2 = calculate_path(loc2_geo_coordinates, loc3_geo_coordinates)
+    # path3 = calculate_path(loc3_geo_coordinates, loc2_geo_coordinates)
+    # # print(path1)
+    #
+    # ## test angle calculation ##
     # print(calculate_angle(path1, path2))  # prints 41 degrees
     # print(calculate_angle(path1, path3))  # prints 139 degrees
+
+    test = Match("Hailey1001", "Wmc7r9Jwj3KvQvW3Z6gV")
+    print(test.match_score())
 
 
 if __name__ == "__main__":

@@ -44,13 +44,10 @@ class Request:
         of request's destination time (time they need to get there)
         """
         return self.request_doc["destination_time"]
-    
-    def get_desired_num_carpoolers(self):
-        """
-        Returns integer of the request's desired number
-        of people they want to carpool with.
-        """
-        return self.request_doc["desired_num_carpoolers"]
+
+    def get_total_num_people_traveling(self):
+        return self.request_doc["total_num_people_traveling"]
+
 
     def get_ride_share(self):
         """
