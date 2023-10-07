@@ -52,70 +52,131 @@ class Match:
         request2_destination_geo_coordinates = (request2_destination_geocode.latitude, request2_destination_geocode.longitude)
         return request1_origin_geo_coordinates, request2_origin_geo_coordinates, request1_destination_geo_coordinates, request2_destination_geo_coordinates
 
-    def match_score(self):
-        """
-        Create a match score for every other user relative to this user 
-        and use this to create a priority queue for this user
-        Note: each user has their own priority queue
-        Returns: request_id1, request_id2,
-        """
-        match_score = 0
-        origin_location_threshold = 0.5  # in miles
-        angle_threshold = 90 # in degrees
-        depart_time_threshold = 3600  # in seconds
-        default_max_carpoolers = 4  # in person
 
-        # 1st priority: carpoolers limit (either works or doesn't)
-        # If below limit, continue to other criteria. If not, return score of 0.
-        if self.request1.get_total_num_people_traveling() + self.request2.get_total_num_people_traveling() > default_max_carpoolers:
-            return self.request_id1, self.request_id2, 0
+# make helper functions that score one difference at 
+# a time based on ranges. ex. score_time_diff (if between 
+# 10 to 15 min, give higher score), if scores return 0 (too far
+#  or out of time range of an 1hr) return 0 in match_score. weight
+#  each scores based on priorities and return totaled score.
 
-        # 2nd priority: depart time difference
+    def score_depart_time_diff(self):
+        """
+        Helper function for match_score().
+
+        Scores request1 and request2 based on how close their depart time is.
+
+        Note: score of 0-10 depends on where the diff lies in a range of 
+        values from a depart time diff of 0-3600 with a step of 360 seconds
+        (i.e. a diff of 365 seconds lies in range [360, 720) so it get a score of 1).
+        Returns: a number between 0-10 or -1, where 0 means they ARE a good match
+        and 10 means they're NOT a good match.
+
+        **Note: a score of 0 means they ARE a good match, 10 means they are NOT
+        and a score of -1 means they should not be a match.
+        """
+        depart_time_threshold = 3600  # in seconds - 1 hour threshold
         date_format = "%m/%d/%Y %H:%M"
         request1_depart_time = datetime.strptime(self.request1.get_depart_time(), date_format)
         request2_depart_time = datetime.strptime(self.request2.get_depart_time(), date_format)
         depart_time_diff = abs(request1_depart_time - request2_depart_time).total_seconds()
-        if depart_time_diff > depart_time_threshold:
-            return self.request_id1, self.request_id2, 0
+        # if depart time of request1 and request2 are more than an hour difference -> don't match
+        if depart_time_diff > depart_time_threshold: 
+            return -1 
         else:
-            pass
+            return int(depart_time_diff / 360) # Note: a 1 hr diff gets a score of 10 while a 59 min diff gets a score of 9
+            
+            
+    def score_origin_location_diff(self):
+        """
+        Helper function for match_score().
 
-        # 3rd priority: origin location difference
+        First checks if origin_location_diff is greater than the threshold 
+        and returns -1 if it is. Otherwise, it converts the origin_location_diff 
+        into an integer value between 0 and 10 based on 0.1 mi step (i.e. diff between
+        0.1 (inclusive) and 0.2 (exclusive) should get a score of 1).
+
+        **Note: a score of 0 means they ARE a good match, 10 means they are NOT
+        and a score of -1 means they should not be a match.
+        """
+        origin_location_threshold = 1  # in miles
         origin_location_diff = distance.distance(self.request1_origin_geo_coordinates, self.request2_origin_geo_coordinates).miles
         # print("location_diff", origin_location_diff)
         if origin_location_diff > origin_location_threshold:
-            return self.request_id1, self.request_id2, 0
+            return -1
         else:
-            pass
+            return int(origin_location_diff * 10) 
+        
+    def score_path_angle(self):
+        """
+        Score is based on where the path angle lies in a 
+        range of 0-90 degrees with a step of 9 degrees.
 
-        # 4th priority: path angle (whether destinations are along the same route)
-        # helper: find_angle()   -> 0 -> return self.request_id1, self.request_id2, 0 too far
+        **Note: a score of 0 means they ARE a good match, 10 means they are NOT
+        and a score of -1 means they should not be a match.
+        """
+        angle_threshold = 90 # in degrees
         request1_path = calculate_path(self.request1_origin_geo_coordinates, self.request1_destination_geo_coordinates)
         request2_path = calculate_path(self.request2_origin_geo_coordinates, self.request2_destination_geo_coordinates)
         path_angles = calculate_angle(request1_path, request2_path)
+        
         if path_angles > angle_threshold:
-            return self.request_id1, self.request_id2, 0
+            return -1
         else:
-            pass
+            return int(path_angles / 9) # Note: an angle of 90 deg gets a score of 10 while 89 deg gets score of 9
 
+    def match_score(self):
+        """
+        Create a match score for every other user relative to this user 
+        and use this to create a priority queue for this user
 
-        # depart_time_diff = abs(self.depart_time - otherUser.depart_time)
-        # desired_carpoolers_diff = abs(self.number_desired_carpoolers - otherUser.number_desired_carpoolers)
-        #
-        # # don't match a driver with a driver
-        # if not (self.user_type == "driver" and otherUser.user_type == "driver"):
-        #     # TODO: adjust the point system to get more accurate matches
-        #     if origin_location_diff <= location_threshold:
-        #         match_score += 10 - origin_location_diff  # adds more to match_score if the difference is smaller (max is 10 points)
-        #     if dest_angle <= angle_threshold:
-        #         match_score += 10 * ((
-        #                                      90 - dest_angle) / 90)  # adds more to match_score if the dest_angle is smaller (max is 10 points) ...etc.
-        #     if depart_time_diff <= depart_time_threshold:
-        #         match_score += 10 * (1800 - depart_time_diff) / 1800
-        #     if desired_carpoolers_diff <= desired_carpoolers_threshold:
-        #         match_score += 5
+        Note: each user has their own priority queue
 
-        return match_score
+        **Note: a score of 0 means they ARE a good match, 10 means they are NOT
+        and a score of -1 means they should not be a match.
+
+        Returns: request_id1, request_id2, score
+        """
+        # TODO: need to give different weights to priorities
+        match_score = 0
+        default_max_carpoolers = 4  # in person
+
+        # 1st priority: carpoolers limit (either works or doesn't)
+        # If below limit, continue to other criteria. If not, return score of -1.
+        total_num_people = self.request1.get_total_num_people_traveling() + self.request2.get_total_num_people_traveling()
+        if total_num_people > default_max_carpoolers:
+            return self.request_id1, self.request_id2, -1
+        else:
+            # TODO: need a better way to score this
+            # min of 2 people and max of 4 people
+            if (total_num_people == 2):
+                match_score += 10
+            elif (total_num_people == 3):
+                match_score += 5
+            elif (total_num_people == 4):
+                match_score += 0
+
+        # 2nd priority: depart time difference
+        depart_time_score = self.score_depart_time_diff()
+        if (depart_time_score == -1):
+            return self.request_id1, self.request_id2, -1
+        else:
+            match_score += depart_time_score
+
+        # 3rd priority: origin location difference in miles
+        origin_location_diff_score = self.score_origin_location_diff()
+        if (origin_location_diff_score == -1):
+            return self.request_id1, self.request_id2, -1
+        else:
+            match_score += origin_location_diff_score
+
+        # 4th priority: path angle (whether destinations are along the same route)
+        path_angle_score = self.score_path_angle()
+        if (path_angle_score == -1):
+            return self.request_id1, self.request_id2, -1
+        else:
+            match_score += path_angle_score
+            
+        return self.request_id1, self.request_id2, match_score
 
 
 def calculate_path(origin, destination):
