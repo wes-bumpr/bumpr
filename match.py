@@ -20,7 +20,7 @@ geolocator = Nominatim(user_agent="bumprTest")  # TODO: set to correct app (bump
 # TODO: Clear document up with new request.py api
 class Match:
     """
-    Creates Single Match (?) by drawing out pairs from current unmatched list
+    Creates Single Match by drawing out pairs from current unmatched list
     """
 
     def __init__(self, request_id1, request_id2):
@@ -32,7 +32,6 @@ class Match:
         self.request2 = Request(request_id2)
 
         self.request1_origin_geo_coordinates, self.request2_origin_geo_coordinates, self.request1_destination_geo_coordinates, self.request2_destination_geo_coordinates = self.get_geocode_points()
-        pass
 
 
     def get_geocode_points(self):
@@ -123,6 +122,29 @@ class Match:
             return -1
         else:
             return int(path_angles / 9) # Note: an angle of 90 deg gets a score of 10 while 89 deg gets score of 9
+    
+    def score_num_people_traveling(self):
+        """
+        Score is based on number of carpoolers
+
+        **Note: a score of 0 means they ARE a good match, 10 means they are NOT
+        and a score of -1 means they should not be a match.
+
+        default max carpoolers: 4.
+        """
+        default_max_carpoolers = 4  # in person
+        total_num_people = self.request1.get_total_num_people_traveling() + self.request2.get_total_num_people_traveling()
+        if total_num_people > default_max_carpoolers:
+            return -1
+        else:
+            # TODO: need a better way to score this
+            # min of 2 people and max of 4 people
+            if (total_num_people == 2):
+                return 10
+            elif (total_num_people == 3):
+                return 5
+            elif (total_num_people == 4):
+                return 0
 
     def match_score(self):
         """
@@ -138,40 +160,32 @@ class Match:
         """
         # TODO: need to give different weights to priorities
         match_score = 0
-        default_max_carpoolers = 4  # in person
 
         # 1st priority: carpoolers limit (either works or doesn't)
         # If below limit, continue to other criteria. If not, return score of -1.
-        total_num_people = self.request1.get_total_num_people_traveling() + self.request2.get_total_num_people_traveling()
-        if total_num_people > default_max_carpoolers:
+        num_people_traveling_score = self.score_num_people_traveling()
+        if num_people_traveling_score == -1:
             return self.request_id1, self.request_id2, -1
         else:
-            # TODO: need a better way to score this
-            # min of 2 people and max of 4 people
-            if (total_num_people == 2):
-                match_score += 10
-            elif (total_num_people == 3):
-                match_score += 5
-            elif (total_num_people == 4):
-                match_score += 0
+            match_score += 0.5 * num_people_traveling_score
 
         # 2nd priority: depart time difference
         depart_time_score = self.score_depart_time_diff()
-        if (depart_time_score == -1):
+        if depart_time_score == -1:
             return self.request_id1, self.request_id2, -1
         else:
             match_score += depart_time_score
 
         # 3rd priority: origin location difference in miles
         origin_location_diff_score = self.score_origin_location_diff()
-        if (origin_location_diff_score == -1):
+        if origin_location_diff_score == -1:
             return self.request_id1, self.request_id2, -1
         else:
             match_score += origin_location_diff_score
 
         # 4th priority: path angle (whether destinations are along the same route)
         path_angle_score = self.score_path_angle()
-        if (path_angle_score == -1):
+        if path_angle_score == -1:
             return self.request_id1, self.request_id2, -1
         else:
             match_score += path_angle_score
