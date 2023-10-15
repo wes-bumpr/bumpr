@@ -7,13 +7,15 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-class Request:
+
+class GetRequest:
     """
     Ride request objects retrieved from database
     """
-    def __init__(self, request_doc_ID):
+
+    def __init__(self, request_doc_id):
         # get request doc from ride-requests collection from Firebase
-        self.ride_requests_ref = db.collection(u"ride-requests").document(request_doc_ID)
+        self.ride_requests_ref = db.collection(u"ride-requests").document(request_doc_id)
         # convert one request data from ride-request collection to dictionary for each access
         self.request_doc = self.ride_requests_ref.get().to_dict()
 
@@ -41,7 +43,7 @@ class Request:
     def get_total_num_people_traveling(self):
         return self.request_doc["total_num_people_traveling"]
 
-    def get_user_ID(self):
+    def get_user_id(self):
         """
         Returns string of user's Wellesley ID of the user
         who made the request
@@ -55,7 +57,6 @@ class Request:
     #     """
     #     return self.request_doc["destination_time"]
 
-
     # def get_ride_share(self):
     #     """
     #     Returns True if user who made request wants to share rides via Lyft/Uber
@@ -68,21 +69,20 @@ class Request:
     #     """
     #     return self.request_doc["personal_car"]
 
-    
     # def get_user_type(self):
     #     """
     #     Returns string of whether user who made request is rider or driver
     #     """
     #     return self.request_doc["user_type"]
 
-    
-       
+
 def main():
     # testing purposes
-    request = Request("Wmc7r9Jwj3KvQvW3Z6gV")
+    request = GetRequest("Wmc7r9Jwj3KvQvW3Z6gV")
     print(request.get_depart_time())
     print(request.get_destination_address())
     print("Hello, this is the main function!")
+
 
 if __name__ == "__main__":
     main()

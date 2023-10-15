@@ -6,7 +6,7 @@
 import heapq  # for priority queue
 import numpy as np  # for various path calculations
 import unittest
-from request import *
+from get_request import *
 from datetime import datetime
 
 # for geo-related calculations
@@ -17,8 +17,8 @@ from geopy.geocoders import Nominatim
 geolocator = Nominatim(user_agent="bumprTest")
 
 
-# TODO: Clear document up with new request.py api
-class Match:
+# TODO: Clear document up with new get_request.py api
+class Score:
     """
     Creates Single Match by drawing out pairs from current unmatched list
     """
@@ -28,11 +28,10 @@ class Match:
         self.request_id1 = request_id1
         self.request_id2 = request_id2
 
-        self.request1 = Request(request_id1)
-        self.request2 = Request(request_id2)
+        self.request1 = GetRequest(request_id1)
+        self.request2 = GetRequest(request_id2)
 
         self.request1_origin_geo_coordinates, self.request2_origin_geo_coordinates, self.request1_destination_geo_coordinates, self.request2_destination_geo_coordinates = self.get_geocode_points()
-
 
     def get_geocode_points(self):
         """
@@ -47,16 +46,17 @@ class Match:
         # geo_coordinates: in the form of latitude, longitude
         request1_origin_geo_coordinates = (request1_origin_geocode.latitude, request1_origin_geocode.longitude)
         request2_origin_geo_coordinates = (request2_origin_geocode.latitude, request2_origin_geocode.longitude)
-        request1_destination_geo_coordinates = (request1_destination_geocode.latitude, request1_destination_geocode.longitude)
-        request2_destination_geo_coordinates = (request2_destination_geocode.latitude, request2_destination_geocode.longitude)
+        request1_destination_geo_coordinates = (
+            request1_destination_geocode.latitude, request1_destination_geocode.longitude)
+        request2_destination_geo_coordinates = (
+            request2_destination_geocode.latitude, request2_destination_geocode.longitude)
         return request1_origin_geo_coordinates, request2_origin_geo_coordinates, request1_destination_geo_coordinates, request2_destination_geo_coordinates
 
-
-# make helper functions that score one difference at 
-# a time based on ranges. ex. score_time_diff (if between 
-# 10 to 15 min, give higher score), if scores return 0 (too far
-#  or out of time range of an 1hr) return 0 in match_score. weight
-#  each scores based on priorities and return totaled score.
+    # make helper functions that score one difference at
+    # a time based on ranges. ex. score_time_diff (if between
+    # 10 to 15 min, give higher score), if scores return 0 (too far
+    #  or out of time range of an 1hr) return 0 in match_score. weight
+    #  each scores based on priorities and return totaled score.
 
     def score_depart_time_diff(self):
         """
@@ -79,12 +79,12 @@ class Match:
         request2_depart_time = datetime.strptime(self.request2.get_depart_time(), date_format)
         depart_time_diff = abs(request1_depart_time - request2_depart_time).total_seconds()
         # if depart time of request1 and request2 are more than an hour difference -> don't match
-        if depart_time_diff > depart_time_threshold: 
-            return -1 
+        if depart_time_diff > depart_time_threshold:
+            return -1
         else:
-            return int(depart_time_diff / 360) # Note: a 1 hr diff gets a score of 10 while a 59 min diff gets a score of 9
-            
-            
+            return int(
+                depart_time_diff / 360)  # Note: a 1 hr diff gets a score of 10 while a 59 min diff gets a score of 9
+
     def score_origin_location_diff(self):
         """
         Helper function for match_score().
@@ -98,13 +98,14 @@ class Match:
         and a score of -1 means they should not be a match.
         """
         origin_location_threshold = 1  # in miles
-        origin_location_diff = distance.distance(self.request1_origin_geo_coordinates, self.request2_origin_geo_coordinates).miles
+        origin_location_diff = distance.distance(self.request1_origin_geo_coordinates,
+                                                 self.request2_origin_geo_coordinates).miles
         # print("location_diff", origin_location_diff)
         if origin_location_diff > origin_location_threshold:
             return -1
         else:
-            return int(origin_location_diff * 10) 
-        
+            return int(origin_location_diff * 10)
+
     def score_path_angle(self):
         """
         Score is based on where the path angle lies in a 
@@ -113,16 +114,16 @@ class Match:
         **Note: a score of 0 means they ARE a good match, 10 means they are NOT
         and a score of -1 means they should not be a match.
         """
-        angle_threshold = 60 # in degrees
+        angle_threshold = 60  # in degrees
         request1_path = calculate_path(self.request1_origin_geo_coordinates, self.request1_destination_geo_coordinates)
         request2_path = calculate_path(self.request2_origin_geo_coordinates, self.request2_destination_geo_coordinates)
         path_angles = calculate_angle(request1_path, request2_path)
-        
+
         if path_angles > angle_threshold:
             return -1
         else:
-            return int(path_angles / 6) # Note: an angle of 60 deg gets a score of 10 while 59 deg gets score of 9
-    
+            return int(path_angles / 6)  # Note: an angle of 60 deg gets a score of 10 while 59 deg gets score of 9
+
     def score_num_people_traveling(self):
         """
         Score is based on number of carpoolers
@@ -139,11 +140,11 @@ class Match:
         else:
             # TODO: need a better way to score this
             # min of 2 people and max of 4 people
-            if (total_num_people == 2):
+            if total_num_people == 2:
                 return 10
-            elif (total_num_people == 3):
+            elif total_num_people == 3:
                 return 5
-            elif (total_num_people == 4):
+            elif total_num_people == 4:
                 return 0
 
     def match_score(self):
@@ -298,7 +299,7 @@ def main():
     # print(calculate_angle(path1, path2))  # prints 41 degrees
     # print(calculate_angle(path1, path3))  # prints 139 degrees
 
-    test = Match("Hailey1001", "Wmc7r9Jwj3KvQvW3Z6gV")
+    test = Score("Hailey1001", "Wmc7r9Jwj3KvQvW3Z6gV")
     print(test.match_score())
 
 
