@@ -14,7 +14,7 @@ from datetime import datetime
 from geopy import distance
 from geopy.geocoders import Nominatim
 
-geolocator = Nominatim(user_agent="bumprTest")  # TODO: set to correct app (bumpr)
+geolocator = Nominatim(user_agent="bumprTest")
 
 
 # TODO: Clear document up with new request.py api
@@ -113,7 +113,7 @@ class Match:
         **Note: a score of 0 means they ARE a good match, 10 means they are NOT
         and a score of -1 means they should not be a match.
         """
-        angle_threshold = 90 # in degrees
+        angle_threshold = 60 # in degrees
         request1_path = calculate_path(self.request1_origin_geo_coordinates, self.request1_destination_geo_coordinates)
         request2_path = calculate_path(self.request2_origin_geo_coordinates, self.request2_destination_geo_coordinates)
         path_angles = calculate_angle(request1_path, request2_path)
@@ -121,7 +121,7 @@ class Match:
         if path_angles > angle_threshold:
             return -1
         else:
-            return int(path_angles / 9) # Note: an angle of 90 deg gets a score of 10 while 89 deg gets score of 9
+            return int(path_angles / 6) # Note: an angle of 60 deg gets a score of 10 while 59 deg gets score of 9
     
     def score_num_people_traveling(self):
         """

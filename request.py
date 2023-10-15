@@ -37,42 +37,43 @@ class Request:
         zip, state, city, street.
         """
         return self.request_doc["origin_address"]
-    
-    def get_destination_time(self):
-        """
-        Returns date and time in this format: mm/dd/yyyy hh:mm
-        of request's destination time (time they need to get there)
-        """
-        return self.request_doc["destination_time"]
 
     def get_total_num_people_traveling(self):
         return self.request_doc["total_num_people_traveling"]
 
-
-    def get_ride_share(self):
-        """
-        Returns True if user who made request wants to share rides via Lyft/Uber
-        """
-        return self.request_doc["ride_share"]
-
-    def geT_personal_car(self):
-        """
-        Returns True if user that made request has a car (driver)
-        """
-        return self.request_doc["personal_car"]
-
     def get_user_ID(self):
         """
-        Returns string of user's Wellesley ID of the user 
+        Returns string of user's Wellesley ID of the user
         who made the request
         """
         return self.request_doc["user_ID"]
+
+    # def get_destination_time(self):
+    #     """
+    #     Returns date and time in this format: mm/dd/yyyy hh:mm
+    #     of request's destination time (time they need to get there)
+    #     """
+    #     return self.request_doc["destination_time"]
+
+
+    # def get_ride_share(self):
+    #     """
+    #     Returns True if user who made request wants to share rides via Lyft/Uber
+    #     """
+    #     return self.request_doc["ride_share"]
+
+    # def get_personal_car(self):
+    #     """
+    #     Returns True if user that made request has a car (driver)
+    #     """
+    #     return self.request_doc["personal_car"]
+
     
-    def get_user_type(self):
-        """
-        Returns string of whether user who made request is rider or driver
-        """
-        return self.request_doc["user_type"]
+    # def get_user_type(self):
+    #     """
+    #     Returns string of whether user who made request is rider or driver
+    #     """
+    #     return self.request_doc["user_type"]
 
     
        
