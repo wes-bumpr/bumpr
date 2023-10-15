@@ -158,38 +158,52 @@ class Match:
 
         Returns: request_id1, request_id2, score
         """
-        # TODO: need to give different weights to priorities
         match_score = 0
 
         # 1st priority: carpoolers limit (either works or doesn't)
         # If below limit, continue to other criteria. If not, return score of -1.
         num_people_traveling_score = self.score_num_people_traveling()
         if num_people_traveling_score == -1:
+            print("terminated after num_people_traveling failed")
             return self.request_id1, self.request_id2, -1
         else:
+            print("num_people_traveling: ", num_people_traveling_score)
             match_score += 0.5 * num_people_traveling_score
 
         # 2nd priority: depart time difference
         depart_time_score = self.score_depart_time_diff()
         if depart_time_score == -1:
+            print("terminated after depart_time_score failed")
             return self.request_id1, self.request_id2, -1
         else:
+            print("depart time: ", depart_time_score)
             match_score += depart_time_score
 
         # 3rd priority: origin location difference in miles
         origin_location_diff_score = self.score_origin_location_diff()
         if origin_location_diff_score == -1:
+            print("terminated after origin location diff too big")
             return self.request_id1, self.request_id2, -1
         else:
+            print("origin location diff: ", origin_location_diff_score)
             match_score += origin_location_diff_score
 
         # 4th priority: path angle (whether destinations are along the same route)
         path_angle_score = self.score_path_angle()
         if path_angle_score == -1:
+            print("terminated after path_angle diff too big")
             return self.request_id1, self.request_id2, -1
         else:
+            print("path angle diff: ", path_angle_score)
             match_score += path_angle_score
-            
+
+        # general check to ensure that overall score is not too big
+        # max score is 35 based on current calculation
+        if match_score > 30:
+            print("overall assessment of score failed the match")
+            return self.request_id1, self.request_id2, -1
+
+        print("match successful.")
         return self.request_id1, self.request_id2, match_score
 
 
