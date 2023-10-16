@@ -1,67 +1,58 @@
-#authors: kim, sandy, alice, nissi, edith
-#time: april 5th, 2023
-
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import random
 
-# Initialize the Firebase app with your project credentials
-cred = credentials.Certificate("path/to/serviceAccountKey.json")
+cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
 firebase_admin.initialize_app(cred)
 
-from matchingAPI import matching #TODO: import matching API
-
-# Get a reference to the Firestore collection
 db = firestore.client()
-unmatched_collection_ref = db.collection('unmatched-list')
-matched_collection_ref = db.collection('matched-list')
 
-#def match_unmatched(user_list)
-    #matches = match.match_users(user_list)
-        #here, we access the class from match API, and use their 
-        #function to match the users in the user_list parameter and we put
-        #the json file that is returned into variable 
+def input_RideRequest_ToFirebase(rideRequestDict):
+    '''
+    Puts one ride request info into Firebase
+    '''
+    for r in rideRequestDict:
+        request = {
+            "depart_time": rideRequestDict["depart_time"],
+            "destination_address": rideRequestDict["destination_address"],
+            #TODO: finish up
+        }
+        # Generate a random integer with 5 digits (between 10000 and 99999)
+        random_integer = random.randrange(10000, 100000)
+        request_doc_id = request[user_ID] + random_integer
+        doc_ref = db.collection(u"ride-requests").document(request_doc_id)
 
-def match_unmatched(unmatched_user_list):
-    # put user_list of unmatched users into the matching algorithm from matching API
-    matches = refresh(unmatched_user_list) # returns dictionary: key - rideID, value - list of user IDs in carpool
 
-    for rideID in matches:
-        pool = matches[rideID]  # [user1ID, user2ID, ...]
-        for userID in pool:
-            # Note: user 1 can have multiple ride requests so need to remove them 
-            # from the unmatched_user_list based on user_ID AND depart_time
-            # remove them from the unmatched_user_list using their user_ID and depart_time
-            # AND add the matched user in the matched-list collection - to recover users for cancels
-            # TODO: remove requests from matched-list collection once arrival time passed
-            unmatched_doc_ref = unmatched_collection_ref.get() # gets all the documents in collection
-            for request in unmatched_doc:
-                if request["user_ID"] == request[userID]:
-                    #TODO: assuming request is document ID
-                    # Get the document data (dictionary) from the unmatched collection
-                    unmatched_doc_ref = unmatched_collection_ref.document(request)
-                    unmatched_doc = unmatched_doc_ref.get().to_dict() # make into dictionary
-                    # create the document with same request id in matched collection
-                    matched_doc_ref = matched_collection_ref.document(request)
-                    # puts unmatched request info into the matched document 
-                    matched_doc_ref.set(unmatched_doc)
-                    print("Document from unmatched request collection added to matched request collection")
-                    # remove the request from unmatched collection
-                    unmatched_list_ref.document(request).delete()
-                    print("Document deleted successfully!")
+def input_Matches_ToFirebase(matchedDict):
+    '''
+    Get the list of ride requests that were matched from score.py
+    Put match into Firebase collection
+
+    {match1: [riderequest1, riderequest2], ...}
+    '''
+    for m in matchedDict:
+        match = {
+            'matchID': m,
+            'ride_request_ID': matchedDict[m]
+        }
+        doc_ref = db.collection(u"matches").document(m)
+        doc_ref.set(match)
 
 
 
 
-#def refresh(unmatched_user_list)
-    # every xx time do this:
-    return match.match_users(unmatched_user_list)
 
-#def handle_user_bail()
-    #case 1: normal
-    #case 2: if user bails out
-        #1. update pool in matched.json
-        #OR
-        #2. if other users in pool don't like new cost or user x was a driver,
-        #then put them in user_list and remove pool from matched.json
-            #assuming we get a cancel notification
+def remove_RideRequest_FromFirebase():
+    '''
+    Remove ride requests from Firebase ride-request collection
+    '''
+
+
+
+def main():
+    matchDict = {'match1': ['riderequest1', 'riderequest2'], 'match2': ['riderequest3', 'riderequest4']}
+    matchListToJSON(matchDict)
+
+if __name__ == "__main__":
+    main()
