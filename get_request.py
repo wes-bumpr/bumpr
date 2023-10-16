@@ -2,8 +2,9 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+# TODO: db initialization could be put into a “main” eventually
 cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred)  # only need to be called once
 
 db = firestore.client()
 

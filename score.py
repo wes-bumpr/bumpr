@@ -17,7 +17,6 @@ from geopy.geocoders import Nominatim
 geolocator = Nominatim(user_agent="bumprTest")
 
 
-# TODO: Clear document up with new get_request.py api
 class Score:
     """
     Creates Single Match by drawing out pairs from current unmatched list
@@ -166,7 +165,7 @@ class Score:
         num_people_traveling_score = self.score_num_people_traveling()
         if num_people_traveling_score == -1:
             print("terminated after num_people_traveling failed")
-            return self.request_id1, self.request_id2, -1
+            return -1
         else:
             print("num_people_traveling: ", num_people_traveling_score)
             match_score += 0.5 * num_people_traveling_score
@@ -175,7 +174,7 @@ class Score:
         depart_time_score = self.score_depart_time_diff()
         if depart_time_score == -1:
             print("terminated after depart_time_score failed")
-            return self.request_id1, self.request_id2, -1
+            return -1
         else:
             print("depart time: ", depart_time_score)
             match_score += depart_time_score
@@ -184,7 +183,7 @@ class Score:
         origin_location_diff_score = self.score_origin_location_diff()
         if origin_location_diff_score == -1:
             print("terminated after origin location diff too big")
-            return self.request_id1, self.request_id2, -1
+            return -1
         else:
             print("origin location diff: ", origin_location_diff_score)
             match_score += origin_location_diff_score
@@ -193,7 +192,7 @@ class Score:
         path_angle_score = self.score_path_angle()
         if path_angle_score == -1:
             print("terminated after path_angle diff too big")
-            return self.request_id1, self.request_id2, -1
+            return -1
         else:
             print("path angle diff: ", path_angle_score)
             match_score += path_angle_score
@@ -202,10 +201,10 @@ class Score:
         # max score is 35 based on current calculation
         if match_score > 30:
             print("overall assessment of score failed the match")
-            return self.request_id1, self.request_id2, -1
+            return -1
 
         print("match successful.")
-        return self.request_id1, self.request_id2, match_score
+        return match_score
 
 
 def calculate_path(origin, destination):
@@ -270,7 +269,7 @@ def calculate_angle(line1, line2):
 
     # Convert the angle to degrees if needed
     angle_degrees = np.degrees(angle_radians)
-
+    print("angle degrees:", angle_degrees)
     return angle_degrees
 
 
