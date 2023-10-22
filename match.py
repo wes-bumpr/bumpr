@@ -49,7 +49,7 @@ class Match:
         unsorted_score_dict = {}
         request_index = len(self.requests_to_match)
         for i in range(request_index):
-            for j in range(i+1, request_index):
+            for j in range(i + 1, request_index):
                 pair_score = Score(self.requests_to_match[i], self.requests_to_match[j]).match_score()
                 if pair_score != -1:
                     match_id = (self.requests_to_match[i], self.requests_to_match[j])
@@ -79,6 +79,7 @@ class Match:
 
     def get_match_dict(self):
         return self.match_dict
+
 
 def main():
     # unsorted_score_dict = {("1", "2"): 15, ("5", "2"): 18, ("6", "-1"): -1}
