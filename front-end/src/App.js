@@ -15,7 +15,8 @@ export default function App() {
       countrycodes: "us",
     },
   });
-  const [pax, setPax] = React.useState();
+  const [disable, setDisable] = React.useState(false);
+  const [pax, setPax] = React.useState('1');
   const [coords, setCoords] = React.useState();
   const [toCoords, setToCoords] = React.useState();
   const [text, setText] = React.useState([]);
@@ -53,23 +54,35 @@ export default function App() {
     setText(label)
     setCoords({'x':x,'y':y})
     setsAddress(label)
+    setDisable(false)
+  }
+
+  function paxFill(num) {
+    setPax(num.target.value.replace(/\D/,''))
+    if ((num.target.value.replace(/\D/,'')).length > 0) {
+      setDisable(false);
+    } else {
+      setDisable(true)
+    }
   }
 
   function addressSelectTo(label, x, y) {
     setToText(label)
     setToCoords({'x':x,'y':y})
     setsToAddress(label)
+    setDisable(false)
   }
 
   function submitHandler() {
     setFormData({
       timing: startDate.toLocaleString(),
-      from_address: text,
+      from_address: sAddress,
       from_coords: coords,
       num_passengers: pax,
-      to_address: toText,
+      to_address: sToAddress,
       to_coords: toCoords,
     });
+    console.log(formData);
     setSubmit(true);
     // rideRequest(formData);
   }
@@ -104,6 +117,9 @@ export default function App() {
           sToAddress={sToAddress}
           pax = {pax}
           setPax={setPax}
+          disable={disable}
+          setDisable={setDisable}
+          paxFill={paxFill}
         />
       )}
 
