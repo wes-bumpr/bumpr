@@ -20,3 +20,4 @@ export function rideRequest(data) {
     return response.json();
   })
 }
+
