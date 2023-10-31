@@ -7,7 +7,7 @@ url = "http://localhost:8848/ride-request"  # Update the URL if your Flask app i
 
 def test():
     json_data = {"key": "value"}
-    response = requests.post(url, json=json_data)
+    response = requests.get(url, json=json_data)
 
 
 
