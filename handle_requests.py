@@ -1,32 +1,36 @@
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
-import random
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import firestore
+# import random
 from flask import Flask, request, jsonify, render_template
 
 import json
-cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
-firebase_admin.initialize_app(cred)
+# cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
+# firebase_admin.initialize_app(cred)
 
-db = firestore.client()
+# db = firestore.client()
 app = Flask(__name__)
+
+import testflask
 
 @app.route('/')
 def hello():
     print("new")
-    return "no"
+    testflask.test()
+    return "helloo"
     # return render_template("template.html")
 
 
-@app.route('/ride-request', methods=['GET'])
+@app.route('/ride-request', methods=['POST'])
 def input_RideRequest_ToFirebase():
     '''
     @param rideRequestsList: list of ride requests (dictionary)
     Puts all ride request info into Firebase
     '''
-    rideRequestsList = request.get_json()
-    print(rideRequestsList)
-    return rideRequestsList
+    testflask.test()
+    # rideRequestsList = request.get_json()
+    # print(rideRequestsList)
+    # return rideRequestsList
     # rideRequestsList = json.loads(rideRequestsList)
 
     # if not isinstance(rideRequestsList, list):
@@ -104,4 +108,4 @@ def main():
 #     main()
 
 if __name__ == "__main__":
-    app.run(port=8848, debug=True)  # Specify the desired port
+    app.run(port=8848)  # Specify the desired port
