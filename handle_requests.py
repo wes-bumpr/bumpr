@@ -1,14 +1,15 @@
-# import firebase_admin
-# from firebase_admin import credentials
-# from firebase_admin import firestore
-# import random
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+import random
 from flask import Flask, request, jsonify, render_template
 
 import json
-# cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
-# firebase_admin.initialize_app(cred)
+cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
+firebase_admin.initialize_app(cred)
 
-# db = firestore.client()
+db = firestore.client()
+
 app = Flask(__name__)
 
 import testflask
@@ -17,8 +18,8 @@ import testflask
 def hello():
     print("new")
     testflask.test()
-    return "helloo"
-    # return render_template("template.html")
+    # return "helloo"
+    return render_template("template.html")
 
 
 @app.route('/ride-request', methods=['POST'])
@@ -27,10 +28,14 @@ def input_RideRequest_ToFirebase():
     @param rideRequestsList: list of ride requests (dictionary)
     Puts all ride request info into Firebase
     '''
-    testflask.test()
-    # rideRequestsList = request.get_json()
-    # print(rideRequestsList)
-    # return rideRequestsList
+    # testflask.test()
+    
+    ride_request_data = request.get_json()
+    print("Received ride request data:")
+    print(ride_request_data)
+    # You can process the data further here or perform any other desired actions.
+    return "Ride request received and processed"
+
     # rideRequestsList = json.loads(rideRequestsList)
 
     # if not isinstance(rideRequestsList, list):
