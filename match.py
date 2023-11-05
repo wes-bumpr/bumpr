@@ -1,13 +1,10 @@
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import firestore
 
-# cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
-# firebase_admin.initialize_app(cred)
-#
-# db = firestore.client()
-
-from score import *
+from score import * #TODO: only import functions we need; not modular right now
+from handle_requests import delete_Item_FromFirebase, db
+from datetime import datetime
 
 
 class Match:
@@ -21,8 +18,25 @@ class Match:
 
         request_to_match: list of unmatched requests
         """
-        # get requests to be matched from firebase
         docs = db.collection(u"ride-requests").stream()
+
+        # TODO: create a list of expired ride requests to delete and let user who made request know it was deleted
+        to_be_deleted_requests_docid = []
+        date_format = "%m/%d/%Y %H:%M"
+        for doc in docs:
+            request = GetRequest(doc.id)
+            request_depart_time = datetime.strptime(request.get_depart_time(), date_format)
+            current_time = datetime.now().timestamp() # current time in seconds
+            print("current time: ", str(current_time))
+            if current_time > request_depart_time.timestamp(): # current time is past the request's depart time (way past their depart time)
+                print("expired time: ", str(request_depart_time))
+                to_be_deleted_requests_docid.append(doc.id)
+                delete_Item_FromFirebase("ride-requests", doc.id)
+        
+        print("requests to be deleted: ", to_be_deleted_requests_docid)
+            
+
+        # get requests to be matched from firebase
         self.requests_to_match = []
         for doc in docs:
             self.requests_to_match.append(doc.id)
@@ -90,7 +104,8 @@ def main():
     # match_id = best_scored[0][0] + best_scored[0][1]
     # print(match_id)
     test = Match()
-    print(test.get_match_dict())
+    # print(test.get_match_dict())
+
     pass
 
 

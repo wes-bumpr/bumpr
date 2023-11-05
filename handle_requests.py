@@ -1,14 +1,10 @@
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import firestore
 import random
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template
 
-import json
-cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
-firebase_admin.initialize_app(cred)
-
-db = firestore.client()
+from get_request import db # imports firebase admin and init app
 
 app = Flask(__name__)
 
@@ -89,6 +85,8 @@ def delete_Item_FromFirebase(collection, doc_id):
     '''
     doc_ref = db.collection(collection).document(doc_id)
     doc_ref.delete()
+    return doc_id
+
 
 def archive_RideRequests_FromFirebase(from_collection, to_collection, ride_request_doc_id):
     '''
