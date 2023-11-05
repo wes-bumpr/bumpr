@@ -15,16 +15,16 @@ export function RideRequest({ formData }) {
                 <div class="mb-1">{formData["timing"]}</div>
               </div>
               <div class="list-group-item">
+                <small>Departure Address</small>
+                <div class="mb-1">{formData["from_address"]}</div>
+              </div>
+              <div class="list-group-item">
                 <small>Destination Address</small>
-                <div class="mb-1">{formData["address"]}</div>
+                <div class="mb-1">{formData["to_address"]}</div>
               </div>
               <div class="list-group-item">
                 <small>Number of Passengers</small>
-                <div class="mb-1">1</div>
-              </div>
-              <div class="list-group-item">
-                <small>Coordinates</small>
-                <div class="mb-1">{formData["coords"]["x"]}, {formData["coords"]["y"]}</div>
+                <div class="mb-1">{formData["num_passengers"]}</div>
               </div>
             </ul>
           </div>

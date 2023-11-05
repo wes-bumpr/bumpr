@@ -59,6 +59,11 @@ nav {
   text-align:left;
 }
 
+.selected_address {
+  text-align:center;
+  font-size:larger;
+}
+
 .list-group-item:first-child {
   border-radius:0!important;
 }
