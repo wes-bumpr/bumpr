@@ -1,5 +1,7 @@
 import { Timing } from "./Timing.js";
 import { Address } from "./Address.js";
+import { AddressTo } from "./AddressTo.js";
+import { Passengers } from "./Passengers.js";
 import React from "react";
 export function AllForm({
   startDate,
@@ -7,10 +9,23 @@ export function AllForm({
   text,
   setText,
   searchResults,
+  searchResultsTo,
   autocomplete,
+  autocompleteTo,
   submitHandler,
   setCoords,
-  addressSelect
+  addressSelect,
+  sAddress,
+  toText,
+  setToText,
+  setToCoords,
+  addressSelectTo,
+  sToAddress,
+  pax,
+  setPax,
+  disable,
+  setDisable,
+  paxFill
 }) {
   const [isPage, setPage] = React.useState("Date");
   const [backFunc, setBackFunc] = React.useState(false);
@@ -18,17 +33,30 @@ export function AllForm({
 
   function toggleForward() {
     if (isPage === "Date") {
-      setPage("Destination");
-      setForFunc(false);
+      setPage("Start");
       setBackFunc(true);
-    } 
+      setDisable(true);
+    } else if (isPage === "Start") {
+      setPage("Destination");
+      setDisable(true);
+    } else if (isPage === "Destination") {
+      setPage("Passengers")
+      setForFunc(false);
+      setDisable(true);
+    }
   }
 
   function toggleBackward() {
-    if (isPage === "Destination") {
+    if (isPage === "Start") {
       setPage("Date");
-      setForFunc(true);
       setBackFunc(false);
+      setDisable(false);
+  } else if (isPage === "Destination") {
+      setPage("Start");
+      setDisable(false);
+  } else if (isPage === "Passengers") {
+      setPage("Destination");
+      setForFunc(true);
   }
 }
 
@@ -38,7 +66,7 @@ export function AllForm({
         return (
           <Timing startDate={startDate} setStartDate={setStartDate}></Timing>
         );
-      case "Destination":
+      case "Start":
         return (
           <Address
             text={text}
@@ -47,8 +75,24 @@ export function AllForm({
             autocomplete={autocomplete}
             setCoords={setCoords}
             addressSelect={addressSelect}
+            sAddress={sAddress}
           ></Address>
         );
+      case "Destination":
+        return (
+          <AddressTo
+            searchResultsTo={searchResultsTo}
+            autocompleteTo={autocompleteTo}
+            toText={toText}
+            setToText={setToText}
+            setToCoords={setToCoords}
+            addressSelectTo={addressSelectTo}
+            sToAddress={sToAddress}></AddressTo>
+        )
+      case "Passengers":
+        return (
+          <Passengers pax={pax} setPax={setPax} paxFill={paxFill}></Passengers>
+        )
       default:
         return (
           <Timing startDate={startDate} setStartDate={setStartDate}></Timing>
@@ -78,7 +122,7 @@ export function AllForm({
         {correctPage(isPage)}
         <div class="col-auto">
           {forFunc ? (
-            <button class="caret-circle" onClick={toggleForward}>
+            <button class="caret-circle" onClick={toggleForward} disabled={disable}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -91,7 +135,7 @@ export function AllForm({
               </svg>
             </button>
           ) : (
-            <button class="caret-circle" onClick={submitHandler}>
+            <button class="caret-circle" onClick={submitHandler} disabled={disable}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
