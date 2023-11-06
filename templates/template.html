@@ -1,25 +1,57 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
     <link rel="stylesheet" href="style.css">
-    <meta name=author content="Your name here">
-    <title>title here</title>
+    <meta name="author" content="Your name here">
+    <title>Title Here</title>
 </head>
 <body>
 
 <main>
-    <h1>Header here</h1>
+    <h1>Header Here</h1>
 
-
+    <form id="ride-request-form">
+        <input type="text" name="name" placeholder="Name">
+        <input type="text" name="pickup_location" placeholder="Pickup Location">
+        <input type="text" name="destination" placeholder="Destination">
+        <button type="button" id="submit-button">Submit</button>
+    </form>
 </main>
 
-<!-- JavaScript at the bottom -->
+<!-- JavaScript at the bottom for faster page loading -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cs.wellesley.edu/~anderson/js/bounds/bounds-plugin.js"></script>
+<script>
+    $(document).ready(function() {
+        // Handle form submission
+        $('#submit-button').click(function() {
+            // Get the form data as a dictionary
+            var rideRequestData = {
+                name: $('input[name="name"]').val(),
+                pickup_location: $('input[name="pickup_location"]').val(),
+                destination: $('input[name="destination"]').val()
+            };
 
+            // Send a POST request to the '/ride-request' endpoint
+            $.ajax({
+                type: 'POST',
+                url: '/ride-request',
+                data: JSON.stringify(rideRequestData),
+                contentType: 'application/json',
+                success: function(response) {
+                    // Handle the response from the server if needed
+                    console.log('Request successful:', response);
+                },
+                error: function(error) {
+                    // Handle errors if the request fails
+                    console.error('Request failed:', error);
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

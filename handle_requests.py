@@ -1,14 +1,10 @@
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import firestore
 import random
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template
 
-import json
-cred = credentials.Certificate("bumpr-firebase-service-acckey.json")
-firebase_admin.initialize_app(cred)
-
-db = firestore.client()
+from get_request import db # imports firebase admin and init app
 
 app = Flask(__name__)
 
@@ -71,16 +67,16 @@ def input_Matches_ToFirebase(matchedDict):
         doc_ref.set(match)
 
 
-def input_RideRequest_ToFirebase(user):
+def input_User_ToFirebase(user):
     '''
-    @param user: singular user-- dictionary of info
+    @param request: singular user-- dictionary of info
     Put user into 'users' collection
     '''
     # Generate a random integer with 5 digits (between 10000 and 99999)
     random_integer = random.randrange(10000, 100000)
-    request_doc_id = r["user_ID"] + str(random_integer)
+    request_doc_id = user["user_ID"] + str(random_integer)
     doc_ref = db.collection(u"ride-requests").document(request_doc_id)
-    doc_ref.set(r)
+    doc_ref.set(user)
 
 
 def delete_Item_FromFirebase(collection, doc_id):
@@ -89,6 +85,8 @@ def delete_Item_FromFirebase(collection, doc_id):
     '''
     doc_ref = db.collection(collection).document(doc_id)
     doc_ref.delete()
+    return doc_id
+
 
 def archive_RideRequests_FromFirebase(from_collection, to_collection, ride_request_doc_id):
     '''
