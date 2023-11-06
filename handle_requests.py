@@ -67,16 +67,16 @@ def input_Matches_ToFirebase(matchedDict):
         doc_ref.set(match)
 
 
-def input_RideRequest_ToFirebase(user):
+def input_User_ToFirebase(user):
     '''
-    @param user: singular user-- dictionary of info
+    @param request: singular user-- dictionary of info
     Put user into 'users' collection
     '''
     # Generate a random integer with 5 digits (between 10000 and 99999)
     random_integer = random.randrange(10000, 100000)
-    request_doc_id = r["user_ID"] + str(random_integer)
+    request_doc_id = user["user_ID"] + str(random_integer)
     doc_ref = db.collection(u"ride-requests").document(request_doc_id)
-    doc_ref.set(r)
+    doc_ref.set(user)
 
 
 def delete_Item_FromFirebase(collection, doc_id):
