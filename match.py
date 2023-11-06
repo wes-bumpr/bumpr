@@ -20,7 +20,7 @@ class Match:
         """
         docs = db.collection(u"ride-requests").stream()
 
-        # TODO: create a list of expired ride requests to delete and let user who made request know it was deleted
+        # create a list of expired ride requests to delete and let user who made request know it was deleted
         to_be_deleted_requests_docid = []
         date_format = "%m/%d/%Y %H:%M"
         for doc in docs:
@@ -34,6 +34,7 @@ class Match:
                 delete_Item_FromFirebase("ride-requests", doc.id)
         
         print("requests to be deleted: ", to_be_deleted_requests_docid)
+        # TODO: let users know that their ride request was deleted AND if their request was matched using the list
             
 
         # get requests to be matched from firebase
