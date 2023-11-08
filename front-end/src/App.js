@@ -16,7 +16,7 @@ export default function App() {
     },
   });
   const [disable, setDisable] = React.useState(false);
-  const [pax, setPax] = React.useState('1');
+  const [pax, setPax] = React.useState();
   const [coords, setCoords] = React.useState();
   const [toCoords, setToCoords] = React.useState();
   const [text, setText] = React.useState([]);
