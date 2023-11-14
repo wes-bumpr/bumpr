@@ -73,6 +73,8 @@ export default function App() {
     setDisable(false)
   }
 
+  React.useEffect(() => {rideRequest(formData)}, [formData]);
+
   function submitHandler() {
     setFormData({
       timing: startDate.toLocaleString(),
@@ -82,9 +84,7 @@ export default function App() {
       to_address: sToAddress,
       to_coords: toCoords,
     });
-    console.log(formData);
     setSubmit(true);
-    // rideRequest(formData);
   }
 
   return (
