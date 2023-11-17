@@ -2,9 +2,8 @@
 # from firebase_admin import credentials
 # from firebase_admin import firestore
 import random
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
-
 from get_request import db  # imports firebase admin and init app
 
 app = Flask(__name__)
@@ -27,28 +26,20 @@ def input_RideRequest_ToFirebase():
     @param rideRequestsList: list of ride requests (dictionary)
     Puts all ride request info into Firebase
     """
-    # testflask.test()
 
     ride_request_data = request.get_json()
     print("Received ride request data:")
     print(ride_request_data)
-    # You can process the data further here or perform any other desired actions.
-    return "Ride request received and processed"
 
-    # rideRequestsList = json.loads(rideRequestsList)
-
-    # if not isinstance(rideRequestsList, list):
-    #     return jsonify({'error': 'JSON rideRequestsList data must be a list of dictionaries'})
-
-    # for r in rideRequestsList:
-    #     if not isinstance(r, dict):
-    #         return jsonify({'error': 'JSON ride request data must be a dictionary'})
-    #     else:
-    #         # Generate a random integer with 5 digits (between 10000 and 99999)
-    #         random_integer = random.randrange(10000, 100000)
-    #         request_doc_id = r["user_ID"] + str(random_integer)
-    #         doc_ref = db.collection(u"ride-requests").document(request_doc_id)
-    #         doc_ref.set(r)
+    if not isinstance(ride_request_data, dict):
+        return jsonify({"error": "JSON ride request data must be a dictionary"})
+    else:
+        # Generate a random integer with 5 digits (between 10000 and 99999)
+        random_integer = random.randrange(10000, 100000)
+        # request_doc_id = ride_request_data["user_ID"] + str(random_integer)
+        doc_ref = db.collection("ride-requests").document("random")
+        doc_ref.set(ride_request_data)
+        return jsonify({"success": "Ride request data added to Firebase"})
 
 
 def input_Matches_ToFirebase(matchedDict):
