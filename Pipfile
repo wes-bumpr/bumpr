@@ -9,6 +9,7 @@ flask = "*"
 pyrebase = "*"
 firebase-admin = "*"
 numpy = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
