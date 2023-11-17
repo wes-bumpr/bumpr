@@ -1,0 +1,2 @@
+FLASK_APP=handle_requests.py
+FLASK_ENV=development
