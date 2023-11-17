@@ -75,6 +75,8 @@ export default function App() {
     setDisable(false)
   }
 
+  React.useEffect(() => {rideRequest(formData)}, [formData]);
+
   function submitHandler() {
     setFormData({
       timing: startDate.toLocaleString(),
