@@ -51,6 +51,13 @@ class GetRequest:
         """
         return self.request_doc["user_ID"]
 
+    def get_geo_code(self):
+        """
+        :return:
+        """
+        pass
+        # TODO
+
     # def get_destination_time(self):
     #     """
     #     Returns date and time in this format: mm/dd/yyyy hh:mm

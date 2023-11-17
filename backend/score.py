@@ -1,12 +1,10 @@
-# Create a Match Class, where we match people based on the information we get
+# Create a Score Class, where we score people based on the information we get
 # from the data that Ride Request API (ex. sampledata-rider.json) imports (put into) into Firebase
 
 # Note: Run an instance of a match for each user that is not matched yet
 
-import heapq  # for priority queue
 import numpy as np  # for various path calculations
-import unittest
-from get_request import *
+from get_request import GetRequest  # TODO: modified but not tested. Test if working
 from datetime import datetime
 
 # for geo-related calculations
