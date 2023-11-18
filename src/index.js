@@ -10,8 +10,8 @@ import { MatchResults } from "./components/MatchResults.js";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <App /> */}
-    <MatchResults></MatchResults>
+    <App />
+    {/* <MatchResults></MatchResults> */}
   </React.StrictMode>
 );
 
