@@ -33,6 +33,17 @@ def input_Matches_ToFirebase(matchedDict):
         doc_ref = db.collection("matches").document(m)
         doc_ref.set(match)
 
+def get_match(match_dict, request_id):
+    '''
+    Helper for input_RideRequest_ToFirebase().
+    
+    Given the current dict of all matches
+    return the match for a given request id
+    '''
+    for match in match_dict:
+        if request_id in match["request_ids"]:
+            return match
+
 
 @app.route("/ride-request", methods=["POST"])
 def input_RideRequest_ToFirebase():
@@ -59,13 +70,17 @@ def input_RideRequest_ToFirebase():
         print("match dict: ", match.match_dict)
         input_Matches_ToFirebase(match.match_dict)
 
-        # Include match_dict in the response to send it back to the frontend
-        response_data = {
-            "success": "Ride request data added to Firebase and matches created (if any)",
-            "match_dict": match.match_dict
-        }
+        # get the match for the specific request id 
+        match_for_request = get_match(match.match_dict, request_doc_id)
+        return jsonify(match_for_request)
 
-        return jsonify(response_data)
+        # Include match_dict in the response to send it back to the frontend
+        # response_data = {
+        #     "success": "Ride request data added to Firebase and matches created (if any)",
+        #     "match_dict": match.match_dict
+        # }
+
+        # return jsonify(response_data)
 
 
 def input_User_ToFirebase(user):

@@ -74,6 +74,9 @@ class Match:
                  request2.get_user_id()]  # users that made the requests (note: a request may have more than 1 rider)
         origin = [request1.get_origin_address(), request2.get_destination_address()]
         to = [request1.get_destination_address(), request2.get_destination_address()]
+        names = ["todo: need get user info api", "name 2"] #TODO: need to get user name given user id
+        request_ids = [request1_id, request2_id]
+        user_ids = [request1.get_user_id(), request2.get_user_id()]
         date_format = "%m/%d/%Y, %I:%M:%S %p"
         request1_depart_time = datetime.strptime(request1.get_depart_time(), date_format)
         request2_depart_time = datetime.strptime(request2.get_depart_time(), date_format)
@@ -81,7 +84,7 @@ class Match:
             depart_time = request1.get_depart_time()
         else:
             depart_time = request2.get_depart_time()
-        return {"users": users, "origin": origin, "to": to, "depart_time": depart_time}
+        return {"users": users, "origin": origin, "to": to, "depart_time": depart_time, "names": names, "request_ids": request_ids, "user_ids": user_ids}
 
     def create_matches(self):
         """
