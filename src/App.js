@@ -33,12 +33,13 @@ export default function App() {
   const [sAddress, setsAddress] = React.useState('No address selected');
   const [sToAddress, setsToAddress] = React.useState('No address selected');
   const [formData, setFormData] = React.useState({
-    timing: "",
-    from_address: "",
-    to_address: "",
-    num_passengers: 0,
-    from_coords: {'x':0, 'y':0},
-    to_coords: {'x':0, 'y':0}
+    depart_time: "",
+    origin_address: "",
+    destination_address: "",
+    total_num_people_traveling: 0,
+    origin_geocode: {'longitude':0, 'latitude':0},
+    destination_geocode: {'longitude':0, 'latitude':0},
+    user_ID: "C10012147",
   });
 
   async function autocomplete(a) {
@@ -55,7 +56,7 @@ export default function App() {
 
   function addressSelect(label, x, y) {
     setText(label)
-    setCoords({'x':x,'y':y})
+    setCoords({'longitude':x,'latitude':y})
     setsAddress(label)
     setDisable(false)
   }
@@ -71,21 +72,22 @@ export default function App() {
 
   function addressSelectTo(label, x, y) {
     setToText(label)
-    setToCoords({'x':x,'y':y})
+    setToCoords({'longitude':x,'latitude':y})
     setsToAddress(label)
     setDisable(false)
   }
 
-  React.useEffect(() => {rideRequest(formData)}, [formData]);
+  // React.useEffect(() => {rideRequest(formData)}, [formData]);
 
   function submitHandler() {
     setFormData({
-      timing: startDate.toLocaleString(),
-      from_address: sAddress,
-      from_coords: coords,
-      num_passengers: pax,
-      to_address: sToAddress,
-      to_coords: toCoords,
+      depart_time: startDate.toLocaleString(),
+      origin_address: sAddress,
+      origin_geocode: coords,
+      total_num_people_traveling: pax,
+      destination_address: sToAddress,
+      destination_coords: toCoords,
+      user_ID: "C1000testing2",
     });
     setSubmit(true);
   }

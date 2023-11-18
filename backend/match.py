@@ -1,3 +1,11 @@
+
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import firestore
+
+from score import Score  # TODO: modified but not tested. Test if working
+# from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
+from get_request import db, GetRequest  # TODO: modified but not tested. Test if working
 from score import Score
 from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
 from get_request import db, GetRequest
@@ -131,8 +139,6 @@ def main():
     # print(match_id)
     test = Match()
     # print(test.get_match_dict())
-
-    pass
 
 
 if __name__ == "__main__":
