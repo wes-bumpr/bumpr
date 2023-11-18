@@ -7,7 +7,7 @@ from score import Score  # TODO: modified but not tested. Test if working
 # from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
 from get_request import db, GetRequest  # TODO: modified but not tested. Test if working
 from score import Score
-from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
+# from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
 from get_request import db, GetRequest
 from datetime import datetime
 
@@ -25,7 +25,7 @@ class Match:
         """
         self.docs = db.collection(u"ride-requests").stream()
 
-        self.delete_expired_requests()
+        # self.delete_expired_requests()
 
         # get requests to be matched from firebase
         self.requests_to_match = []
@@ -70,13 +70,12 @@ class Match:
         '''
         request1 = GetRequest(request1_id)
         request2 = GetRequest(request2_id)
-        users = [request1.get_user_id(),
+        user_ids = [request1.get_user_id(),
                  request2.get_user_id()]  # users that made the requests (note: a request may have more than 1 rider)
         origin = [request1.get_origin_address(), request2.get_destination_address()]
         to = [request1.get_destination_address(), request2.get_destination_address()]
         names = ["todo: need get user info api", "name 2"] #TODO: need to get user name given user id
         request_ids = [request1_id, request2_id]
-        user_ids = [request1.get_user_id(), request2.get_user_id()]
         date_format = "%m/%d/%Y, %I:%M:%S %p"
         request1_depart_time = datetime.strptime(request1.get_depart_time(), date_format)
         request2_depart_time = datetime.strptime(request2.get_depart_time(), date_format)
@@ -84,7 +83,7 @@ class Match:
             depart_time = request1.get_depart_time()
         else:
             depart_time = request2.get_depart_time()
-        return {"users": users, "origin": origin, "to": to, "depart_time": depart_time, "names": names, "request_ids": request_ids, "user_ids": user_ids}
+        return {"user_ids": user_ids, "origin": origin, "to": to, "depart_time": depart_time, "names": names, "request_ids": request_ids}
 
     def create_matches(self):
         """
@@ -108,28 +107,28 @@ class Match:
                 if request1_name in key or request2_name in key:
                     del self.sorted_score_dict[key]
 
-    def delete_expired_requests(self):
-        '''
-        Identifies any expired ride requests, deletes them from Firebase,
-        and notifies the user.
-        '''
-        to_be_deleted_requests_docid = []
-        date_format = "%m/%d/%Y, %I:%M:%S %p"
-        current_time = datetime.now().timestamp()  # current time in seconds
-        # print("current time: ", str(current_time))
-        for doc in self.docs:
-            request = GetRequest(doc.id)
-            request_depart_time = datetime.strptime(request.get_depart_time(), date_format)
-            # print(f’depart time for request {doc.id}: {request_depart_time}’)
-            if current_time > request_depart_time.timestamp():  # current time is past the request’s depart time (way past their depart time)
-                # print("expired time: ", str(request_depart_time))
-                to_be_deleted_requests_docid.append(doc.id)
-                delete_Item_FromFirebase("ride-requests", doc.id)
-        print("requests to be deleted: ", to_be_deleted_requests_docid)
-        # TODO: let users know that their ride request was deleted AND if their request was matched using the list
+    # def delete_expired_requests(self):
+    #     '''
+    #     Identifies any expired ride requests, deletes them from Firebase,
+    #     and notifies the user.
+    #     '''
+    #     to_be_deleted_requests_docid = []
+    #     date_format = "%m/%d/%Y, %I:%M:%S %p"
+    #     current_time = datetime.now().timestamp()  # current time in seconds
+    #     # print("current time: ", str(current_time))
+    #     for doc in self.docs:
+    #         request = GetRequest(doc.id)
+    #         request_depart_time = datetime.strptime(request.get_depart_time(), date_format)
+    #         # print(f’depart time for request {doc.id}: {request_depart_time}’)
+    #         if current_time > request_depart_time.timestamp():  # current time is past the request’s depart time (way past their depart time)
+    #             # print("expired time: ", str(request_depart_time))
+    #             to_be_deleted_requests_docid.append(doc.id)
+    #             delete_Item_FromFirebase("ride-requests", doc.id)
+    #     print("requests to be deleted: ", to_be_deleted_requests_docid)
+    #     # TODO: let users know that their ride request was deleted AND if their request was matched using the list
 
-    def get_match_dict(self):
-        return self.match_dict
+    # def get_match_dict(self):
+    #     return self.match_dict
 
 
 def main():
