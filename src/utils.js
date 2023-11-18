@@ -5,13 +5,13 @@ import axios from "axios";
 
 const SERVER_ORIGIN = '';
 const rrUrl = "/ride-request";
-export function rideRequest(data) {
+export async function rideRequest(data) {
   // param data: a list of dictionary ride requests
   // example: ride_requests = [{"depart_time": 1000, "user_ID": "C1024851", "destination_address": {"city": "Needham", "state": "MA"}},
   //                          {"depart_time": 1050, "user_ID": "C1000001", "destination_address": {"city": "Wellesley", "state": "MA"}}]
  
 console.log(data)
-axios({
+return axios({
   method: "POST",
   url: "/ride-request",
   data:
