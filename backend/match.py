@@ -19,7 +19,7 @@ class Match:
 
         request_to_match: list of unmatched requests
         """
-        docs = db.collection(u"ride-requests-test").stream()
+        docs = db.collection(u"ride-requests").stream()
 
         # create a list of expired ride requests to delete and let user who made request know it was deleted
         # to_be_deleted_requests_docid = []

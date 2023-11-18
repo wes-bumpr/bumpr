@@ -51,7 +51,7 @@ def input_RideRequest_ToFirebase():
         # Generate a random integer with 5 digits (between 10000 and 99999)
         random_integer = random.randrange(10000, 100000)
         request_doc_id = ride_request_data["user_ID"] + str(random_integer)
-        doc_ref = db.collection("ride-requests-test").document(request_doc_id)
+        doc_ref = db.collection("ride-requests").document(request_doc_id)
         doc_ref.set(ride_request_data) # data pushed into firebase
 
         # run match every time new ride request info is put into firebase
@@ -59,8 +59,15 @@ def input_RideRequest_ToFirebase():
         print("match dict: ", match.match_dict)
         input_Matches_ToFirebase(match.match_dict)
 
-        return jsonify({"success": "Ride request data added to Firebase and matches created (if any)"})
-    
+        # Include match_dict in the response to send it back to the frontend
+        response_data = {
+            "success": "Ride request data added to Firebase and matches created (if any)",
+            "match_dict": match.match_dict
+        }
+
+        return jsonify(response_data)
+
+
 def input_User_ToFirebase(user):
     """
     @param request: singular user-- dictionary of info

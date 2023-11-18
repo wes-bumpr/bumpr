@@ -34,11 +34,11 @@ export default function App() {
   const [sToAddress, setsToAddress] = React.useState('No address selected');
   const [formData, setFormData] = React.useState({
     depart_time: "",
-    from_address: "",
-    to_address: "",
-    num_passengers: 0,
-    from_coords: {'x':0, 'y':0},
-    to_coords: {'x':0, 'y':0},
+    origin_address: "",
+    destination_address: "",
+    total_num_people_traveling: 0,
+    origin_geocode: {'longitude':0, 'latitude':0},
+    destination_geocode: {'longitude':0, 'latitude':0},
     user_ID: "C10012147",
   });
 
@@ -56,7 +56,7 @@ export default function App() {
 
   function addressSelect(label, x, y) {
     setText(label)
-    setCoords({'x':x,'y':y})
+    setCoords({'longitude':x,'latitude':y})
     setsAddress(label)
     setDisable(false)
   }
@@ -72,7 +72,7 @@ export default function App() {
 
   function addressSelectTo(label, x, y) {
     setToText(label)
-    setToCoords({'x':x,'y':y})
+    setToCoords({'longitude':x,'latitude':y})
     setsToAddress(label)
     setDisable(false)
   }
@@ -82,12 +82,12 @@ export default function App() {
   function submitHandler() {
     setFormData({
       depart_time: startDate.toLocaleString(),
-      from_address: sAddress,
-      from_coords: coords,
-      num_passengers: pax,
-      to_address: sToAddress,
-      to_coords: toCoords,
-      user_ID: "C10012147test",
+      origin_address: sAddress,
+      origin_geocode: coords,
+      total_num_people_traveling: pax,
+      destination_address: sToAddress,
+      destination_coords: toCoords,
+      user_ID: "C1000testing2",
     });
     setSubmit(true);
   }

@@ -16,7 +16,7 @@ class GetRequest:
 
     def __init__(self, request_doc_id):
         # get request doc from ride-requests collection from Firebase
-        self.ride_requests_ref = db.collection(u"ride-requests-test").document(request_doc_id)
+        self.ride_requests_ref = db.collection(u"ride-requests").document(request_doc_id)
         # convert one request data from ride-request collection to dictionary for each access
         self.request_doc = self.ride_requests_ref.get().to_dict()
 
