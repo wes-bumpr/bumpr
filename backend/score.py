@@ -36,24 +36,16 @@ class Score:
         :return: geo coordinate representations or request 1 and request 2 origins and destinations
         """
         # geocode: general geo information storage
-        request1_origin_geocode = geolocator.geocode(self.request1.get_origin_address())
-        request2_origin_geocode = geolocator.geocode(self.request2.get_origin_address())
-        request1_destination_geocode = geolocator.geocode(self.request1.get_destination_address())
-        request2_destination_geocode = geolocator.geocode(self.request2.get_destination_address())
+        # request1_origin_geocode = geolocator.geocode(self.request1.get_origin_address())
+        # request2_origin_geocode = geolocator.geocode(self.request2.get_origin_address())
+        # request1_destination_geocode = geolocator.geocode(self.request1.get_destination_address())
+        # request2_destination_geocode = geolocator.geocode(self.request2.get_destination_address())
         # geo_coordinates: in the form of latitude, longitude
-        request1_origin_geo_coordinates = (request1_origin_geocode.latitude, request1_origin_geocode.longitude)
-        request2_origin_geo_coordinates = (request2_origin_geocode.latitude, request2_origin_geocode.longitude)
-        request1_destination_geo_coordinates = (
-            request1_destination_geocode.latitude, request1_destination_geocode.longitude)
-        request2_destination_geo_coordinates = (
-            request2_destination_geocode.latitude, request2_destination_geocode.longitude)
+        request1_origin_geo_coordinates = self.request1.get_origin_geocode_coordinates()
+        request2_origin_geo_coordinates = self.request2.get_origin_geocode_coordinates()
+        request1_destination_geo_coordinates = self.request1.get_destination_geocode_coordinates()
+        request2_destination_geo_coordinates = self.request2.get_destination_geocode_coordinates()
         return request1_origin_geo_coordinates, request2_origin_geo_coordinates, request1_destination_geo_coordinates, request2_destination_geo_coordinates
-
-    # make helper functions that score one difference at
-    # a time based on ranges. ex. score_time_diff (if between
-    # 10 to 15 min, give higher score), if scores return 0 (too far
-    #  or out of time range of an 1hr) return 0 in match_score. weight
-    #  each scores based on priorities and return totaled score.
 
     def score_depart_time_diff(self):
         """
@@ -267,7 +259,7 @@ def calculate_angle(line1, line2):
 
     # Convert the angle to degrees if needed
     angle_degrees = np.degrees(angle_radians)
-    print("angle degrees:", angle_degrees)
+    # print("angle degrees:", angle_degrees)
     return angle_degrees
 
 
@@ -296,7 +288,7 @@ def main():
     # print(calculate_angle(path1, path2))  # prints 41 degrees
     # print(calculate_angle(path1, path3))  # prints 139 degrees
 
-    test = Score("Hailey1001", "Wmc7r9Jwj3KvQvW3Z6gV")
+    test = Score("N4a4VtnNqIFcrN01dBOf", "Wmc7r9Jwj3KvQvW3Z6gV")
     print(test.match_score())
 
 
