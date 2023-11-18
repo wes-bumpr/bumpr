@@ -90,34 +90,33 @@ export default function App() {
     setSubmit(true);
   }
 
-  React.useEffect(() => {
-    const requestResult = rideRequest(formData);
-    setProfileData({
-      contactinfo: requestResult.riders[1],
-      depart_time: requestResult.depart_time,
-      from: requestResult.from,
-      to: requestResult.to})
-  }, [formData]);
+  // setProfileData({
+  //   contactinfo: requestResult.riders[1],
+  //   depart_time: requestResult.depart_time,
+  //   from: requestResult.from,
+  //   to: requestResult.to})
+
+  React.useEffect(() => {rideRequest(formData)}, [formData]);
+  const [profileData, setProfileData] = React.useState(null);
 
   
   function getData() {
-    // GET request if we want to get data separately
-    // axios({
-    //   method: "GET",
-    //   url:"/profile",
-    // })
-    // .then((response) => {
-    //   const res =response.data
-    //   setProfileData(({
-    //     profile_name: res.name,
-    //     about_me: res.about}))
-    // }).catch((error) => {
-    //   if (error.response) {
-    //     console.log(error.response)
-    //     console.log(error.response.status)
-    //     console.log(error.response.headers)
-    //     }
-    // })
+    axios({
+      method: "GET",
+      url:"/profile",
+    })
+    .then((response) => {
+      const res =response.data
+      setProfileData(({
+        profile_name: res.name,
+        about_me: res.about}))
+    }).catch((error) => {
+      if (error.response) {
+        console.log(error.response)
+        console.log(error.response.status)
+        console.log(error.response.headers)
+        }
+    })
   }
 
   return (
