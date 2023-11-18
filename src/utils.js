@@ -41,6 +41,7 @@ axios({
   .then((response) => {
     const res = response.data;
     console.log('Request successful:', res);
+    return res;
   })
   .catch((error) => {
     if (error.response) {
