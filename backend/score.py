@@ -63,7 +63,7 @@ class Score:
         and a score of -1 means they should not be a match.
         """
         depart_time_threshold = 3600  # in seconds - 1 hour threshold
-        date_format = "%m/%d/%Y %H:%M"
+        date_format = "%m/%d/%Y, %I:%M:%S %p"
         request1_depart_time = datetime.strptime(self.request1.get_depart_time(), date_format)
         request2_depart_time = datetime.strptime(self.request2.get_depart_time(), date_format)
         depart_time_diff = abs(request1_depart_time - request2_depart_time).total_seconds()
