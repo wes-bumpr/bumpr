@@ -3,7 +3,7 @@
 # from firebase_admin import firestore
 
 from score import Score  # TODO: modified but not tested. Test if working
-from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
+# from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
 from get_request import db, GetRequest  # TODO: modified but not tested. Test if working
 from datetime import datetime
 
@@ -19,7 +19,7 @@ class Match:
 
         request_to_match: list of unmatched requests
         """
-        docs = db.collection(u"ride-requests").stream()
+        docs = db.collection(u"ride-requests-test").stream()
 
         # create a list of expired ride requests to delete and let user who made request know it was deleted
         # to_be_deleted_requests_docid = []
@@ -130,8 +130,6 @@ def main():
     # print(match_id)
     test = Match()
     # print(test.get_match_dict())
-
-    pass
 
 
 if __name__ == "__main__":
