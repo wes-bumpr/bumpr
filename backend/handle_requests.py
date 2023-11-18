@@ -51,7 +51,7 @@ def input_RideRequest_ToFirebase():
         # Generate a random integer with 5 digits (between 10000 and 99999)
         random_integer = random.randrange(10000, 100000)
         request_doc_id = ride_request_data["user_ID"] + str(random_integer)
-        doc_ref = db.collection("ride-requests").document(request_doc_id)
+        doc_ref = db.collection("ride-requests-test").document(request_doc_id)
         doc_ref.set(ride_request_data) # data pushed into firebase
 
         # run match every time new ride request info is put into firebase
