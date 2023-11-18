@@ -2,8 +2,9 @@
 # from firebase_admin import credentials
 # from firebase_admin import firestore
 
-from score import * #TODO: only import functions we need; not modular right now
-from handle_requests import delete_Item_FromFirebase, db
+from score import Score  # TODO: modified but not tested. Test if working
+from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
+from get_request import db  # TODO: modified but not tested. Test if working
 from datetime import datetime
 
 

@@ -29,19 +29,20 @@ class GetRequest:
 
     def get_destination_address(self):
         """
-        Returns a dictionary of the request's destination address:
-        zip, state, city, street.
+        Returns a string of the request's destination address
         """
         return self.request_doc["destination_address"]
 
     def get_origin_address(self):
         """
-        Returns a dictionary of the request's destination address:
-        zip, state, city, street.
+        Returns a string of the request's destination address.
         """
         return self.request_doc["origin_address"]
 
     def get_total_num_people_traveling(self):
+        """
+        :return: number of people traveling in int format
+        """
         return self.request_doc["total_num_people_traveling"]
 
     def get_user_id(self):
@@ -51,12 +52,17 @@ class GetRequest:
         """
         return self.request_doc["user_ID"]
 
-    # def get_destination_time(self):
-    #     """
-    #     Returns date and time in this format: mm/dd/yyyy hh:mm
-    #     of request's destination time (time they need to get there)
-    #     """
-    #     return self.request_doc["destination_time"]
+    def get_origin_geocode_coordinates(self):
+        """
+        :return: geo coordinates in the format of (latitude, longitude)
+        """
+        return self.request_doc["origin_geocode"]["latitude"], self.request_doc["origin_geocode"]["longitude"]
+
+    def get_destination_geocode_coordinates(self):
+        """
+        :return: geo coordinatesin the format of (latitude, longitude)
+        """
+        return self.request_doc["destination_geocode"]["latitude"], self.request_doc["destination_geocode"]["longitude"]
 
     # def get_ride_share(self):
     #     """
@@ -80,8 +86,9 @@ class GetRequest:
 def main():
     # testing purposes
     request = GetRequest("Wmc7r9Jwj3KvQvW3Z6gV")
-    print(request.get_depart_time())
-    print(request.get_destination_address())
+    # print(request.get_depart_time())
+    # print(request.get_destination_address())
+    # print(request.get_origin_geocode_coordinates())
     print("Hello, this is the main function!")
 
 
