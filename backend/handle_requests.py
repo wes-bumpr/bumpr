@@ -36,8 +36,9 @@ def input_RideRequest_ToFirebase():
     else:
         # Generate a random integer with 5 digits (between 10000 and 99999)
         random_integer = random.randrange(10000, 100000)
+        # TODO: app.js need to give in correct format of ride request data with "user_ID" as well
         # request_doc_id = ride_request_data["user_ID"] + str(random_integer)
-        doc_ref = db.collection("ride-requests").document("random")
+        doc_ref = db.collection("ride-requests").document("request_doc_id")
         doc_ref.set(ride_request_data)
         return jsonify({"success": "Ride request data added to Firebase"})
 
@@ -50,6 +51,8 @@ def input_Matches_ToFirebase(matchedDict):
     {match1: [riderequest1, riderequest2], ...}
     """
     for m in matchedDict:
+        # TODO: doc id is m; match = {"from": "21 wellesley college", "to": "babson college", "departure_time: "03/05/2023 11:30",
+        # "riders": ["dc103@wellesley.edu", "hailey@gmail.com", "ella@gmail.com"]}
         match = {"matchID": m, "ride_request_ID": matchedDict[m]}
         doc_ref = db.collection("matches").document(m)
         doc_ref.set(match)

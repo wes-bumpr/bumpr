@@ -53,6 +53,7 @@ class Match:
         # run the match
         self.create_score_dictionary()
         self.create_matches()
+        print(self.match_dict)
 
     def create_score_dictionary(self):
         """
