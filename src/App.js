@@ -33,7 +33,7 @@ export default function App() {
   const [sAddress, setsAddress] = React.useState('No address selected');
   const [sToAddress, setsToAddress] = React.useState('No address selected');
   const [formData, setFormData] = React.useState({
-    timing: "",
+    depart_time: "",
     from_address: "",
     to_address: "",
     num_passengers: 0,
@@ -80,7 +80,7 @@ export default function App() {
 
   function submitHandler() {
     setFormData({
-      timing: startDate.toLocaleString(),
+      depart_time: startDate.toLocaleString(),
       from_address: sAddress,
       from_coords: coords,
       num_passengers: pax,
