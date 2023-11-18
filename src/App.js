@@ -33,12 +33,13 @@ export default function App() {
   const [sAddress, setsAddress] = React.useState('No address selected');
   const [sToAddress, setsToAddress] = React.useState('No address selected');
   const [formData, setFormData] = React.useState({
-    timing: "",
+    depart_time: "",
     from_address: "",
     to_address: "",
     num_passengers: 0,
     from_coords: {'x':0, 'y':0},
-    to_coords: {'x':0, 'y':0}
+    to_coords: {'x':0, 'y':0},
+    user_ID: "C10012147",
   });
 
   async function autocomplete(a) {
@@ -80,12 +81,13 @@ export default function App() {
 
   function submitHandler() {
     setFormData({
-      timing: startDate.toLocaleString(),
+      depart_time: startDate.toLocaleString(),
       from_address: sAddress,
       from_coords: coords,
       num_passengers: pax,
       to_address: sToAddress,
       to_coords: toCoords,
+      user_ID: "C10012147",
     });
     setSubmit(true);
   }
