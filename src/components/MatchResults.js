@@ -1,4 +1,4 @@
-import '/Users/ellaboodell/bumpr/src/static/style.css';
+// import '/Users/ellaboodell/bumpr/src/static/style.css';
 import React from 'react';
 
 export function MatchResults({formdata}) {

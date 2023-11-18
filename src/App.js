@@ -34,7 +34,6 @@ export default function App() {
   const [sToAddress, setsToAddress] = React.useState('No address selected');
   const [formData, setFormData] = React.useState({
     depart_time: "",
-
     origin_address: "",
     destination_address: "",
     total_num_people_traveling: 0,
@@ -87,7 +86,7 @@ export default function App() {
       origin_geocode: coords,
       total_num_people_traveling: pax,
       destination_address: sToAddress,
-      destination_coords: toCoords,
+      destination_geocode: toCoords,
       user_ID: "C1000testing2",
     });
     setSubmit(true);
