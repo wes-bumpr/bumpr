@@ -4,17 +4,18 @@ import axios from "axios";
 import { Navbar } from "./components/Navbar.js";
 import { AllForm } from "./components/AllForm.js";
 import { RideRequest } from "./components/Request.js";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { GoogleProvider } from "leaflet-geosearch";
 import React from "react";
 import {rideRequest} from "./utils.js";
 
 
 export default function App() {
 
-  const provider = new OpenStreetMapProvider({
+  const provider = new GoogleProvider({
     params: {
-      "accept-language": "en",
-      countrycodes: "us",
+      apiKey: 'AIzaSyAouxsv_Fxccs3lakln7RNb9fz5h8Bs7aw',
+      language: "en",
+      region: "us",
     },
   });
   const [disable, setDisable] = React.useState(false);
