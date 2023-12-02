@@ -25,7 +25,8 @@ export function AllForm({
   setPax,
   disable,
   setDisable,
-  paxFill
+  paxFill,
+  inputRef
 }) {
   const [isPage, setPage] = React.useState("Date");
   const [backFunc, setBackFunc] = React.useState(false);
@@ -76,6 +77,7 @@ export function AllForm({
             setCoords={setCoords}
             addressSelect={addressSelect}
             sAddress={sAddress}
+            inputRef={inputRef}
           ></Address>
         );
       case "Destination":
@@ -87,7 +89,9 @@ export function AllForm({
             setToText={setToText}
             setToCoords={setToCoords}
             addressSelectTo={addressSelectTo}
-            sToAddress={sToAddress}></AddressTo>
+            sToAddress={sToAddress}
+            inputRef={inputRef}>
+            </AddressTo>
         )
       case "Passengers":
         return (
