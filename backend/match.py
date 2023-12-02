@@ -1,46 +1,85 @@
-# import firebase_admin
-# from firebase_admin import credentials
-# from firebase_admin import firestore
-
-from score import Score  # TODO: modified but not tested. Test if working
-from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
-from get_request import db  # TODO: modified but not tested. Test if working
+from score import Score
+# from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
+from get_request import db, GetRequest
 from datetime import datetime
+
+
+def add_match_info(request1_id, request2_id):
+    """
+    Given request1 id and request2 id,
+    build the dictionary with the match information --> which will
+    be the value for a match key in the match_dict dictionary.
+    Dictionary consists of: list of users, list of origins and destinations, and earliest depart time.
+    :param request1_id: string representing the first matched request ID
+    :param request2_id: string representing the first matched request ID
+    :return: dictionary representing the information of a match
+    """
+    request1 = GetRequest(request1_id)
+    request2 = GetRequest(request2_id)
+    request_ids = [request1_id, request2_id]
+    users = [request1.get_user_id(),
+             request2.get_user_id()]  # users that made the requests (note: a request may have more than 1 rider)
+    origin = [request1.get_origin_address(), request2.get_destination_address()]
+    to = [request1.get_destination_address(), request2.get_destination_address()]
+    date_format = "%m/%d/%Y, %I:%M:%S %p"
+    request1_depart_time = datetime.strptime(request1.get_depart_time(), date_format)
+    request2_depart_time = datetime.strptime(request2.get_depart_time(), date_format)
+    if request1_depart_time < request2_depart_time:
+        depart_time = request1.get_depart_time()
+    else:
+        depart_time = request2.get_depart_time()
+    return {"users": users, "origin": origin, "to": to, "depart_time": depart_time, "request_ids": request_ids}
+
+
+def delete_expired_requests():
+    """
+    Intended to be a helper function.
+    Identifies any expired ride requests, deletes them from Firebase,
+    and notifies the user.
+    """
+    docs = db.collection(u"ride-requests-test").stream()
+
+    to_be_deleted_requests_docid = []
+    date_format = "%m/%d/%Y, %I:%M:%S %p"
+    current_time = datetime.now().timestamp()  # current time in seconds
+    print("current time: ", str(current_time))
+    for doc in docs:
+        request = GetRequest(doc.id)
+        request_depart_time = datetime.strptime(request.get_depart_time(), date_format)
+        print(f'depart time for request {doc.id}: {request_depart_time}')
+
+        # current time is past the request’s depart time (way past their depart time)
+        if current_time > request_depart_time.timestamp():
+            # print("expired time: ", str(request_depart_time))
+            to_be_deleted_requests_docid.append(doc.id)
+            doc_ref = db.collection("ride-requests-test").document(doc.id)
+            doc_ref.delete()
+    print("requests to be deleted: ", to_be_deleted_requests_docid)
+    # TODO: let users know that their ride request was deleted AND if their request was matched using the list
 
 
 class Match:
     """
-    Look over collection of unmatched ride requests to create matches based on score
+    This class handles the process of matching requests
     """
-
     def __init__(self):
         """
-        performs the matching
+        performs the matching.
+        1. Clean the database and delete expired requests
+        2. Get requests and score each pair of requests.
+           Score of -1 is a fail to match. Lower score is a better match.
+        3. Rank scores and save them as successful matches
 
         request_to_match: list of unmatched requests
         """
-        docs = db.collection(u"ride-requests").stream()
+        # check and delete expired requests prior to making matches
+        delete_expired_requests()
 
-        # create a list of expired ride requests to delete and let user who made request know it was deleted
-        to_be_deleted_requests_docid = []
-        date_format = "%m/%d/%Y %H:%M"
-        for doc in docs:
-            request = GetRequest(doc.id)
-            request_depart_time = datetime.strptime(request.get_depart_time(), date_format)
-            current_time = datetime.now().timestamp() # current time in seconds
-            print("current time: ", str(current_time))
-            if current_time > request_depart_time.timestamp(): # current time is past the request's depart time (way past their depart time)
-                print("expired time: ", str(request_depart_time))
-                to_be_deleted_requests_docid.append(doc.id)
-                delete_Item_FromFirebase("ride-requests", doc.id)
-        
-        print("requests to be deleted: ", to_be_deleted_requests_docid)
-        # TODO: let users know that their ride request was deleted AND if their request was matched using the list
-            
+        self.docs = db.collection(u"ride-requests-test").stream()
 
         # get requests to be matched from firebase
         self.requests_to_match = []
-        for doc in docs:
+        for doc in self.docs:
             self.requests_to_match.append(doc.id)
         # print(self.requests_to_match)
         # end of getting list of requests
@@ -54,7 +93,14 @@ class Match:
         # run the match
         self.create_score_dictionary()
         self.create_matches()
-        print(self.match_dict)
+        # print(self.match_dict)
+
+    def get_match_dict(self):
+        """
+        getter for match dict
+        :return: dictionary of successful matches
+        """
+        return self.match_dict
 
     def create_score_dictionary(self):
         """
@@ -81,21 +127,19 @@ class Match:
         while self.sorted_score_dict:
             # get best scored item
             best_scored = next(iter(self.sorted_score_dict.items()))  # gives ((request1, request2), score) tuple
-            request1_name = best_scored[0][0]
+            request1_name = best_scored[0][0]  # request id
             request2_name = best_scored[0][1]
 
             # add to match_dict
             match_id = request1_name + request2_name
-            self.match_dict[match_id] = best_scored[1]
+            match_info = add_match_info(request1_name, request2_name)
+            self.match_dict[match_id] = match_info  # best_scored[1]
 
             # remove other pairs of matches with either request1 or request2
             sorted_score_dict_original = self.sorted_score_dict.copy()
             for key in sorted_score_dict_original:
                 if request1_name in key or request2_name in key:
                     del self.sorted_score_dict[key]
-
-    def get_match_dict(self):
-        return self.match_dict
 
 
 def main():
@@ -107,9 +151,8 @@ def main():
     # match_id = best_scored[0][0] + best_scored[0][1]
     # print(match_id)
     test = Match()
-    # print(test.get_match_dict())
-
-    pass
+    print(test.get_match_dict())
+    # delete_expired_requests()
 
 
 if __name__ == "__main__":

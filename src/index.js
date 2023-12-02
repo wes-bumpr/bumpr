@@ -4,12 +4,14 @@ import './static/style.css';
 import App from './App.js';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.css';
-import 'leaflet-geosearch/dist/geosearch.css'
+import 'leaflet-geosearch/dist/geosearch.css';
+import { MatchResults } from "./components/MatchResults.js";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <App />
+    {/* <MatchResults></MatchResults> */}
   </React.StrictMode>
 );
 

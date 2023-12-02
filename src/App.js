@@ -4,17 +4,18 @@ import axios from "axios";
 import { Navbar } from "./components/Navbar.js";
 import { AllForm } from "./components/AllForm.js";
 import { RideRequest } from "./components/Request.js";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { GoogleProvider } from "leaflet-geosearch";
 import React from "react";
 import {rideRequest} from "./utils.js";
 
 
 export default function App() {
 
-  const provider = new OpenStreetMapProvider({
+  const provider = new GoogleProvider({
     params: {
-      "accept-language": "en",
-      countrycodes: "us",
+      apiKey: 'AIzaSyAouxsv_Fxccs3lakln7RNb9fz5h8Bs7aw',
+      language: "en",
+      region: "us",
     },
   });
   const [disable, setDisable] = React.useState(false);
@@ -32,12 +33,13 @@ export default function App() {
   const [sAddress, setsAddress] = React.useState('No address selected');
   const [sToAddress, setsToAddress] = React.useState('No address selected');
   const [formData, setFormData] = React.useState({
-    timing: "",
-    from_address: "",
-    to_address: "",
-    num_passengers: 0,
-    from_coords: {'x':0, 'y':0},
-    to_coords: {'x':0, 'y':0}
+    depart_time: "",
+    origin_address: "",
+    destination_address: "",
+    total_num_people_traveling: 0,
+    origin_geocode: {'longitude':0, 'latitude':0},
+    destination_geocode: {'longitude':0, 'latitude':0},
+    user_ID: "C10012147",
   });
 
   async function autocomplete(a) {
@@ -54,7 +56,7 @@ export default function App() {
 
   function addressSelect(label, x, y) {
     setText(label)
-    setCoords({'x':x,'y':y})
+    setCoords({'longitude':x,'latitude':y})
     setsAddress(label)
     setDisable(false)
   }
@@ -70,45 +72,68 @@ export default function App() {
 
   function addressSelectTo(label, x, y) {
     setToText(label)
-    setToCoords({'x':x,'y':y})
+    setToCoords({'longitude':x,'latitude':y})
     setsToAddress(label)
     setDisable(false)
   }
 
-  React.useEffect(() => {rideRequest(formData)}, [formData]);
 
   function submitHandler() {
     setFormData({
-      timing: startDate.toLocaleString(),
-      from_address: sAddress,
-      from_coords: coords,
-      num_passengers: pax,
-      to_address: sToAddress,
-      to_coords: toCoords,
+      depart_time: startDate.toLocaleString(),
+
+      origin_address: sAddress,
+      origin_geocode: coords,
+      total_num_people_traveling: Number(pax),
+      destination_address: sToAddress,
+      destination_geocode: toCoords,
+      user_ID: "testing1",
     });
     setSubmit(true);
   }
-  React.useEffect(() => {rideRequest(formData)}, [formData]);
+
+  
+
+  const [profileData, setProfileData] = React.useState(null);
 
 
-  const [profileData, setProfileData] = useState(null)
-  function getData() {
-    axios({
-      method: "GET",
-      url:"/profile",
-    })
-    .then((response) => {
-      const res =response.data
-      setProfileData(({
-        profile_name: res.name,
-        about_me: res.about}))
-    }).catch((error) => {
-      if (error.response) {
-        console.log(error.response)
-        console.log(error.response.status)
-        console.log(error.response.headers)
-        }
-    })}
+  React.useEffect(() => {if (isSubmit) {
+    const fetchData = async () => {
+      try {
+        const requestResult = await rideRequest(formData); // Assuming rideRequest returns a Promise
+        setProfileData({
+          contactinfo: requestResult.riders[1],
+          depart_time: requestResult.depart_time,
+          from: requestResult.from,
+          to: requestResult.to}); // Update state with the result of rideRequest
+      } catch (error) {
+        // Handle errors if necessary
+        console.error('Error:', error);
+      }
+    };
+    fetchData();} // Call the async function to fetch data when formData changes
+  }, [isSubmit]);
+
+  
+  // function getData() {
+  //   axios({
+  //     method: "GET",
+  //     url:"/profile",
+  //   })
+  //   .then((response) => {
+  //     const res =response.data
+  //     setProfileData(({
+  //       profile_name: res.name,
+  //       about_me: res.about}))
+  //   }).catch((error) => {
+  //     if (error.response) {
+  //       console.log(error.response)
+  //       console.log(error.response.status)
+  //       console.log(error.response.headers)
+  //       }
+  //   })
+  // }
+
 
   return (
     <>

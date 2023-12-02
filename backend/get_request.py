@@ -16,13 +16,13 @@ class GetRequest:
 
     def __init__(self, request_doc_id):
         # get request doc from ride-requests collection from Firebase
-        self.ride_requests_ref = db.collection(u"ride-requests").document(request_doc_id)
+        self.ride_requests_ref = db.collection(u"ride-requests-test").document(request_doc_id)
         # convert one request data from ride-request collection to dictionary for each access
         self.request_doc = self.ride_requests_ref.get().to_dict()
 
     def get_depart_time(self):
         """
-        Returns data and time in this format: mm/dd/yyyy hh:mm
+        Returns data and time in this format: "%m/%d/%Y, %I:%M:%S %p"
         of request's required departure time from origin address
         """
         return self.request_doc["depart_time"]
