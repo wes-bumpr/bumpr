@@ -77,41 +77,64 @@ export default function App() {
     setDisable(false)
   }
 
-  // React.useEffect(() => {rideRequest(formData)}, [formData]);
 
   function submitHandler() {
     setFormData({
       depart_time: startDate.toLocaleString(),
+
       origin_address: sAddress,
       origin_geocode: coords,
       total_num_people_traveling: pax,
       destination_address: sToAddress,
-      destination_coords: toCoords,
+      destination_geocode: toCoords,
       user_ID: "C1000testing2",
     });
     setSubmit(true);
   }
-  React.useEffect(() => {rideRequest(formData)}, [formData]);
 
+  
 
-  const [profileData, setProfileData] = useState(null)
-  function getData() {
-    axios({
-      method: "GET",
-      url:"/profile",
-    })
-    .then((response) => {
-      const res =response.data
-      setProfileData(({
-        profile_name: res.name,
-        about_me: res.about}))
-    }).catch((error) => {
-      if (error.response) {
-        console.log(error.response)
-        console.log(error.response.status)
-        console.log(error.response.headers)
-        }
-    })}
+  const [profileData, setProfileData] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const requestResult = await rideRequest(formData); // Assuming rideRequest returns a Promise
+        setProfileData({
+          contactinfo: requestResult.riders[1],
+          depart_time: requestResult.depart_time,
+          from: requestResult.from,
+          to: requestResult.to}); // Update state with the result of rideRequest
+      } catch (error) {
+        // Handle errors if necessary
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData(); // Call the async function to fetch data when formData changes
+  }, [formData]);
+
+  
+  
+  // function getData() {
+  //   axios({
+  //     method: "GET",
+  //     url:"/profile",
+  //   })
+  //   .then((response) => {
+  //     const res =response.data
+  //     setProfileData(({
+  //       profile_name: res.name,
+  //       about_me: res.about}))
+  //   }).catch((error) => {
+  //     if (error.response) {
+  //       console.log(error.response)
+  //       console.log(error.response.status)
+  //       console.log(error.response.headers)
+  //       }
+  //   })
+  // }
+
 
   return (
     <>

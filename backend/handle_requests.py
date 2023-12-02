@@ -29,9 +29,20 @@ def input_Matches_ToFirebase(matchedDict):
     {match1: [riderequest1, riderequest2], ...}
     """
     for m in matchedDict:
-        match = {"matchID": m, "ride_request_ID": matchedDict[m]}
+        match = matchedDict[m]
         doc_ref = db.collection("matches").document(m)
         doc_ref.set(match)
+
+def get_match(match_dict, request_id):
+    '''
+    Helper for input_RideRequest_ToFirebase().
+
+    Given the current dict of all matches
+    return the match for a given request id
+    '''
+    for match in match_dict:
+        if request_id in match_dict[match]["request_ids"]:
+            return match_dict[match]
 
 
 @app.route("/ride-request", methods=["POST"])
@@ -59,13 +70,17 @@ def input_RideRequest_ToFirebase():
         print("match dict: ", match.match_dict)
         input_Matches_ToFirebase(match.match_dict)
 
-        # Include match_dict in the response to send it back to the frontend
-        response_data = {
-            "success": "Ride request data added to Firebase and matches created (if any)",
-            "match_dict": match.match_dict
-        }
+        # get the match for the specific request id 
+        match_for_request = get_match(match.match_dict, request_doc_id)
+        return jsonify(match_for_request)
 
-        return jsonify(response_data)
+        # Include match_dict in the response to send it back to the frontend
+        # response_data = {
+        #     "success": "Ride request data added to Firebase and matches created (if any)",
+        #     "match_dict": match.match_dict
+        # }
+
+        # return jsonify(response_data)
 
 
 def input_User_ToFirebase(user):
@@ -103,27 +118,22 @@ def archive_RideRequests_FromFirebase(
 
 
 def main():
-    ride_request_1 = [
-        {
-            "depart_time": 1000,
-            "user_ID": "C1024851",
-            "destination_address": {"city": "Needham", "state": "MA"},
-        }
-    ]
     # matchDict = {'match1': ['riderequest1', 'riderequest2'], 'match2': ['riderequest3', 'riderequest4']}
 
     # testing match! yay
-    # match = Match()
-    # print("match dict: ", match.match_dict)
-    # input_Matches_ToFirebase(match.match_dict)
+    match = Match()
+    print("\nmatch dict: ", match.match_dict)
+    input_Matches_ToFirebase(match.match_dict)
+    match_for_request = get_match(match.match_dict, "Wmc7r9Jwj3KvQvW3Z6gV")
+    print("\nmatch for request: ", match_for_request)
 
     # input_RideRequest_ToFirebase(ride_request_1)
     # delete_Item_FromFirebase("ride-requests", "C102485152896")
     # archive_RideRequests_FromFirebase("ride-requests", "deleted-requests", "C102485129977")
 
 
-# if __name__ == "__main__":
-#     main()
-
 if __name__ == "__main__":
-    app.run(port=8848)  # Specify the desired port
+    main()
+
+# if __name__ == "__main__":
+#     app.run(port=8848)  # Specify the desired port

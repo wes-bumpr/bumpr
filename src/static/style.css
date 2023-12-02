@@ -132,3 +132,18 @@ nav {
   padding: 10px 65px;
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 };
+
+.ul {
+  text-align: center;
+  list-style-type: none; /* Remove bullets */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margins */
+};
+
+.ul_li {
+  list-style: none;
+  border: 1px solid rgb(2, 2, 2); /* Add a thin border to each list item */
+  margin-top: -1px; /* Prevent double borders */
+  background-color: #46C9DA; /* Add a blue background color */
+  padding: 12px; /* Add some padding */
+};

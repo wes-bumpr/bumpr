@@ -1,4 +1,5 @@
 from score import Score
+# from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
 from get_request import db, GetRequest
 from datetime import datetime
 
