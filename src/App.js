@@ -84,10 +84,10 @@ export default function App() {
 
       origin_address: sAddress,
       origin_geocode: coords,
-      total_num_people_traveling: pax,
+      total_num_people_traveling: Number(pax),
       destination_address: sToAddress,
       destination_geocode: toCoords,
-      user_ID: "C1000testing2",
+      user_ID: "testing1",
     });
     setSubmit(true);
   }
@@ -96,25 +96,21 @@ export default function App() {
 
   const [profileData, setProfileData] = React.useState(null);
 
-  React.useEffect(() => {
+
+  React.useEffect(() => {if (isSubmit) {
     const fetchData = async () => {
       try {
         const requestResult = await rideRequest(formData); // Assuming rideRequest returns a Promise
-        setProfileData({
-          contactinfo: requestResult.riders[1],
-          depart_time: requestResult.depart_time,
-          from: requestResult.from,
-          to: requestResult.to}); // Update state with the result of rideRequest
+        setProfileData(
+          requestResult); // Update state with the result of rideRequest
       } catch (error) {
         // Handle errors if necessary
         console.error('Error:', error);
       }
     };
+    fetchData();} // Call the async function to fetch data when formData changes
+  }, [isSubmit]);
 
-    fetchData(); // Call the async function to fetch data when formData changes
-  }, [formData]);
-
-  
   
   // function getData() {
   //   axios({
@@ -140,7 +136,7 @@ export default function App() {
     <>
       <Navbar />
       {isSubmit ? (
-        <RideRequest formData={formData} />
+        <RideRequest formData={formData} profileData = {profileData} />
       ) : (
         <AllForm
           startDate={startDate}

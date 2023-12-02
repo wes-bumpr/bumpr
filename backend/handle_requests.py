@@ -39,12 +39,28 @@ def get_match(match_dict, request_id):
 
     Given the current dict of all matches
     return the match for a given request id
+
+    Return ex: {'users': ['testing1', 'testing1'], 'origin': 
+                ['Wellesley, MA, USA', '231 Forest St, Babson Park, MA 02457, USA'],
+                'to': ['231 Forest St, Babson Park, MA 02457, USA', '231 Forest St, Babson Park, 
+                MA 02457, USA'], 'depart_time': '12/9/2023, 12:17:18 PM', 'request_ids': 
+                ['testing176241', 'testing197388']}
+    * if no match for the specified request id that was just inputted then returns None
     '''
+    print("get_match: ", match_dict)
+    print("get_match request id: ", request_id)
     for match in match_dict:
+        print("get match match: ", match)
         if request_id in match_dict[match]["request_ids"]:
+            print("match for request: ", match_dict[match])
             return match_dict[match]
+    return "No Match"
 
 
+#TODO: Currently tries to match inputted ride request with existing ride requests
+# in order to display the match info if the inputted ride request has a match
+# but also need to run the Match() for requests that weren't matched right away
+# maybe need a timer that runs Match() every 8 hours or so
 @app.route("/ride-request", methods=["POST"])
 def input_RideRequest_ToFirebase():
     """
@@ -62,7 +78,7 @@ def input_RideRequest_ToFirebase():
         # Generate a random integer with 5 digits (between 10000 and 99999)
         random_integer = random.randrange(10000, 100000)
         request_doc_id = ride_request_data["user_ID"] + str(random_integer)
-        doc_ref = db.collection("ride-requests").document(request_doc_id)
+        doc_ref = db.collection("ride-requests-test").document(request_doc_id)
         doc_ref.set(ride_request_data) # data pushed into firebase
 
         # run match every time new ride request info is put into firebase
@@ -72,6 +88,7 @@ def input_RideRequest_ToFirebase():
 
         # get the match for the specific request id 
         match_for_request = get_match(match.match_dict, request_doc_id)
+        print("match for request: ", match_for_request)
         return jsonify(match_for_request)
 
         # Include match_dict in the response to send it back to the frontend
@@ -82,7 +99,7 @@ def input_RideRequest_ToFirebase():
 
         # return jsonify(response_data)
 
-
+#TODO: need to work on login and having user profiles
 def input_User_ToFirebase(user):
     """
     @param request: singular user-- dictionary of info
@@ -132,8 +149,10 @@ def main():
     # archive_RideRequests_FromFirebase("ride-requests", "deleted-requests", "C102485129977")
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+    # main()
+    # get_match(match_dict, request_id)
+    
 
 # if __name__ == "__main__":
 #     app.run(port=8848)  # Specify the desired port
