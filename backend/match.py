@@ -2,6 +2,7 @@ from score import Score
 # from handle_requests import delete_Item_FromFirebase  # TODO: modified but not tested. Test if working
 from get_request import db, GetRequest
 from datetime import datetime
+from get_userinfo import GetUserInfo
 
 
 def add_match_info(request1_id, request2_id):
@@ -13,12 +14,16 @@ def add_match_info(request1_id, request2_id):
     :param request1_id: string representing the first matched request ID
     :param request2_id: string representing the first matched request ID
     :return: dictionary representing the information of a match
+
+    ex. {'users': ['C10004321', 'C10004500'], 'origin': 
+    ['Wellesley College', '"21 Wellesley College"'], 'to': 
+    ['700 Atlantic Ave, Boston, MA 02110, United States', '"21 Wellesley College"'], 
+    'depart_time': '12/30/2030, 12:00:00 AM', 'request_ids': ['EjDOXx3H9yUFLmwz25DD', 
+    'Vc1FkPEq9BDSApUHLYEV']}
     """
     request1 = GetRequest(request1_id)
     request2 = GetRequest(request2_id)
     request_ids = [request1_id, request2_id]
-    users = [request1.get_user_id(),
-             request2.get_user_id()]  # users that made the requests (note: a request may have more than 1 rider)
     origin = [request1.get_origin_address(), request2.get_destination_address()]
     to = [request1.get_destination_address(), request2.get_destination_address()]
     date_format = "%m/%d/%Y, %I:%M:%S %p"
@@ -28,7 +33,22 @@ def add_match_info(request1_id, request2_id):
         depart_time = request1.get_depart_time()
     else:
         depart_time = request2.get_depart_time()
-    return {"users": users, "origin": origin, "to": to, "depart_time": depart_time, "request_ids": request_ids}
+    # get user emails and phone numbers to display when there is a match
+    users = [request1.get_user_id(),
+             request2.get_user_id()]  # users that made the requests (note: a request may have more than 1 rider)
+    #TODO: clean the db with correct user ids in requests info to give email and name info to frontend when match info is displayed
+    # user_id1 = request1.get_user_id()
+    # user_id2 = request2.get_user_id()
+    # user1 = GetUserInfo(user_id1)
+    # user2 = GetUserInfo(user_id2)
+    # user_email1 = user1.get_email()
+    # user_email2 = user2.get_email()
+    # user_emails = [user_email1, user_email2]
+    # user_name1 = user1.get_name()
+    # user_name2 = user2.get_name()
+    # users = [user_name1, user_name2]
+    return {"users": users,"origin": origin, "to": to, "depart_time": depart_time, "request_ids": request_ids}
+    # return {"users": users, "user_emails": user_emails,"origin": origin, "to": to, "depart_time": depart_time, "request_ids": request_ids}
 
 
 def delete_expired_requests():

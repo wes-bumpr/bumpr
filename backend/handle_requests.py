@@ -54,6 +54,7 @@ def get_match(match_dict, request_id):
         if request_id in match_dict[match]["request_ids"]:
             print("match for request: ", match_dict[match])
             return match_dict[match]
+    return "No Match"
 
 
 #TODO: Currently tries to match inputted ride request with existing ride requests

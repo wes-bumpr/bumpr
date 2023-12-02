@@ -101,11 +101,8 @@ export default function App() {
     const fetchData = async () => {
       try {
         const requestResult = await rideRequest(formData); // Assuming rideRequest returns a Promise
-        setProfileData({
-          contactinfo: requestResult.riders[1],
-          depart_time: requestResult.depart_time,
-          from: requestResult.from,
-          to: requestResult.to}); // Update state with the result of rideRequest
+        setProfileData(
+          requestResult); // Update state with the result of rideRequest
       } catch (error) {
         // Handle errors if necessary
         console.error('Error:', error);
@@ -139,7 +136,7 @@ export default function App() {
     <>
       <Navbar />
       {isSubmit ? (
-        <RideRequest formData={formData} />
+        <RideRequest formData={formData} profileData = {profileData} />
       ) : (
         <AllForm
           startDate={startDate}
