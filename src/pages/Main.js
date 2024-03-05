@@ -15,9 +15,9 @@ import { RideRequest } from "../components/Request.js";
 import { GoogleProvider } from "leaflet-geosearch";
 import React from "react";
 import {rideRequest} from "../utils.js";
-import {Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+// import ResultList from "leaflet-geosearch/dist/resultList";
 
 
 export default function Main() {
@@ -31,11 +31,11 @@ export default function Main() {
   });
 
 
-  let navigate = useNavigate(); 
-  const routeChange = () =>{ 
-    let path = `/output`; 
-    navigate(path);
-  }
+//   let navigate = useNavigate(); 
+//   const routeChange = () =>{ 
+//     let path = `/output`; 
+//     navigate(path);
+//   }
 
   const [disable, setDisable] = React.useState(false);
   const [pax, setPax] = React.useState();
@@ -121,8 +121,10 @@ export default function Main() {
       try {
         console.log("form data in main.js" + formData)
         const requestResult = await rideRequest(formData); // Assuming rideRequest returns a Promise
+        console.log("request result", requestResult)
         setProfileData(requestResult)
         console.log("request result in main.js" + requestResult)
+        console.log("set formData ", formData)
         //setProfileData(requestResult); // Update state with the result of rideRequest
         console.log("setprofiledata" + profileData)
       } catch (error) {
@@ -152,20 +154,17 @@ export default function Main() {
   //       }
   //   })
   // }
-  
-  const handleButtonClick = async () => {
-    await fetchData();
-  }
+//           <RideResult formData={formData} profileData={profileData}></RideResult>
 
 
   return (
     <>
       <Navbar />
       {isSubmit ? (
-        <Link to={{pathname: "/output", state: {formData, profileData}}}><button>
-        View Match 
-      </button>
-      </Link>
+          <Link to={{pathname: "/input", state: {formData, profileData}}}><button>
+          View Match 
+        </button>
+        </Link>
         // isContinue ? (
         //   <RideRequest formData={formData} />
         // ) : (
