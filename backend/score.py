@@ -107,7 +107,7 @@ class Score:
         request1_path = calculate_path(self.request1_origin_geo_coordinates, self.request1_destination_geo_coordinates)
         request2_path = calculate_path(self.request2_origin_geo_coordinates, self.request2_destination_geo_coordinates)
         path_angles = calculate_angle(request1_path, request2_path)
-
+        print("path angle: ", path_angles)
         if path_angles > angle_threshold:
             return -1
         else:
@@ -255,7 +255,14 @@ def calculate_angle(line1, line2):
     magnitude2 = np.linalg.norm(direction_vector2)
 
     # Calculate the angle in radians between the two lines
-    angle_radians = np.arccos(dot_product / (magnitude1 * magnitude2))
+ 
+    print("dot product: ", dot_product)
+    print("magnitude 1: ", magnitude1)
+    print("magnitude 2: ", magnitude2)
+    bounded_dot_product = np.clip(dot_product / (magnitude1 * magnitude2), -1, 1)
+    print("bounded dot product: ", bounded_dot_product)
+    angle_radians = np.arccos(bounded_dot_product)
+    print("angle radians: ", angle_radians)
 
     # Convert the angle to degrees if needed
     angle_degrees = np.degrees(angle_radians)

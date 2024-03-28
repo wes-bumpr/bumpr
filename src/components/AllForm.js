@@ -2,7 +2,10 @@ import { Timing } from "./Timing.js";
 import { Address } from "./Address.js";
 import { AddressTo } from "./AddressTo.js";
 import { Passengers } from "./Passengers.js";
-import React from "react";
+import React from 'react';
+// import {Link } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+
 export function AllForm({
   startDate,
   setStartDate,
@@ -31,6 +34,12 @@ export function AllForm({
   const [isPage, setPage] = React.useState("Date");
   const [backFunc, setBackFunc] = React.useState(false);
   const [forFunc, setForFunc] = React.useState(true);
+
+  // let navigate = useNavigate(); 
+  // const routeChange = () =>{ 
+  //   let path = `/output`; 
+  //   navigate(path);
+  // }
 
   function toggleForward() {
     if (isPage === "Date") {
@@ -154,6 +163,10 @@ export function AllForm({
           )}
         </div>
       </div>
+      {/* <Link to="/output"><button>
+              View Match 
+            </button>
+            </Link> */}
     </div>
   );
 }
