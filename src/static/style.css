@@ -29,6 +29,13 @@ nav {
   line-height: 4.5rem;
 }
 
+.subprompt {
+  font-weight: 600;
+  text-align: center;
+  font-size: 2rem;
+  line-height: 2.5rem;
+}
+
 .promptholder {
   height: 80vh;
 }
