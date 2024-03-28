@@ -14,7 +14,7 @@ export const Input = () => {
         }
     }, [location.state]);
 
-    // while (!formData) {
+    // while (formData == null) {
     //     console.log("waiting for form data")
     // }
 

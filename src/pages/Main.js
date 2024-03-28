@@ -1,10 +1,3 @@
-// export const Main = () => {
-//     return (
-//         <h1>Main page, we routed!</h1>
-//     );
-// }
-
-
 import "../static/style.css";
 import { useState } from 'react'
 import axios from "axios";
@@ -30,13 +23,6 @@ export default function Main() {
     },
   });
 
-
-//   let navigate = useNavigate(); 
-//   const routeChange = () =>{ 
-//     let path = `/output`; 
-//     navigate(path);
-//   }
-
   const [disable, setDisable] = React.useState(false);
   const [pax, setPax] = React.useState();
   const [coords, setCoords] = React.useState();
@@ -46,6 +32,7 @@ export default function Main() {
   const [searchResults, setSearchResults] = React.useState([]);
   const [searchResultsTo, setSearchResultsTo] = React.useState([]);
   const [isSubmit, setSubmit] = React.useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [startDate, setStartDate] = React.useState(new Date());
   const address = React.useRef(null);
   const toAddress = React.useRef(null);
@@ -116,55 +103,64 @@ export default function Main() {
   const [profileData, setProfileData] = React.useState(null);
 
 
-  React.useEffect(() => {if (isSubmit) {
-    const fetchData = async () => {
-      try {
-        console.log("form data in main.js" + formData)
-        const requestResult = await rideRequest(formData); // Assuming rideRequest returns a Promise
-        console.log("request result", requestResult)
-        setProfileData(requestResult)
-        console.log("request result in main.js" + requestResult)
-        console.log("set formData ", formData)
-        //setProfileData(requestResult); // Update state with the result of rideRequest
-        console.log("setprofiledata" + profileData)
-      } catch (error) {
-        // Handle errors if necessary
-        console.error('Error:', error);
+  // React.useEffect(() => {if (isSubmit) {
+  //   const fetchData = async () => {
+  //     try {
+  //       console.log("form data in main.js" + formData)
+  //       const requestResult = await rideRequest(formData); // Assuming rideRequest returns a Promise
+  //       console.log("request result", requestResult)
+  //       setProfileData(requestResult)
+  //       console.log("request result in main.js" + requestResult)
+  //       console.log("set formData ", formData)
+  //       //setProfileData(requestResult); // Update state with the result of rideRequest
+  //       console.log("setprofiledata" + profileData)
+  //     } catch (error) {
+  //       // Handle errors if necessary
+  //       console.error('Error:', error);
+  //     }
+  //   };
+  //   fetchData();} // Call the async function to fetch data when formData changes
+  // }, [isSubmit]);
+
+
+  React.useEffect(() => {
+    if (formData.depart_time != "") {
+    axios({
+      method: "POST",
+      url: "/ride-request",
+      data:
+        formData,
+    }).then(response => {
+     
+      console.log("HERE IS RESPONSE.DATA", response.data)
+      setProfileData(response.data);
+      //console.log("HERE IS PROFILE DATA", profileData)
+      setLoading(false);
+    }).catch((error) => {
+      if (error.response) {
+        console.log('Request failed:', error.response.status);
+        console.log('Response data:', error.response.data);
+        console.log('Response headers:', error.response.headers);
       }
-    };
-    fetchData();} // Call the async function to fetch data when formData changes
-  }, [isSubmit]);
+    });
+  }
+  }, [formData]);
 
-  
-  // function getData() {
-  //   axios({
-  //     method: "GET",
-  //     url:"/profile",
-  //   })
-  //   .then((response) => {
-  //     const res =response.data
-  //     setProfileData(({
-  //       profile_name: res.name,
-  //       about_me: res.about}))
-  //   }).catch((error) => {
-  //     if (error.response) {
-  //       console.log(error.response)
-  //       console.log(error.response.status)
-  //       console.log(error.response.headers)
-  //       }
-  //   })
-  // }
-//           <RideResult formData={formData} profileData={profileData}></RideResult>
-
+    console.log("HERE IS PROFILE DATA", profileData)
 
   return (
     <>
       <Navbar />
       {isSubmit ? (
-          <Link to={{pathname: "/input", state: {formData, profileData}}}><button>
-          View Match 
-        </button>
-        </Link>
+        //   <Link to={{pathname: "/input", state: {formData, profileData}}}><button>
+        //   View Match 
+        // </button>
+        // </Link>
+        isLoading ? (
+          <div className="App">Loading...</div>
+          ) : (
+            <RideResult formData={formData} profileData = {profileData} />
+          )
         // isContinue ? (
         //   <RideRequest formData={formData} />
         // ) : (
