@@ -100,17 +100,20 @@ def input_RideRequest_ToFirebase():
         # return jsonify(response_data)
 
 #TODO: need to work on login and having user profiles
-def input_User_ToFirebase(user):
+@app.route("/login", methods=["POST"])
+def input_User_ToFirebase():
     """
     @param request: singular user-- dictionary of info
     Put user into 'users' collection
     """
+    # get user email from frontend login page
+    user_data = request.get_json()
+    user_ID = user_data['email'].split('@')
     # Generate a random integer with 5 digits (between 10000 and 99999)
     random_integer = random.randrange(10000, 100000)
-    request_doc_id = user["user_ID"] + str(random_integer)
-    doc_ref = db.collection("ride-requests").document(request_doc_id)
-    doc_ref.set(user)
-
+    request_doc_id = user_ID + str(random_integer)
+    doc_ref = db.collection("users").document(request_doc_id)
+    doc_ref.set(user_data) # data pushed into firebase
 
 def delete_Item_FromFirebase(collection, doc_id):
     """
