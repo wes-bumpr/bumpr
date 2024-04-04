@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 
 
 export const Login = () => {
-  const [isSubmit, setSubmit] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -34,9 +34,8 @@ export const Login = () => {
     return value;
   };
 
-  React.useEffect(() => {
-    if (isSubmit) {
-      console.log(formData)
+  const navigate = useNavigate()
+  function handleClick() {
     axios({
       method: "POST",
       url: "/login",
@@ -49,8 +48,8 @@ export const Login = () => {
         console.log('Response headers:', error.response.headers);
       }
     });
+    navigate('/')
   }
-  }, [isSubmit]);
 
   return (
     <div>
@@ -87,7 +86,7 @@ export const Login = () => {
             required
           />
         </div>
-        <button type="submit" onClick={setSubmit}>Submit</button>
+        <button type="button" onClick={handleClick}>Submit</button>
       </form>
     </div>
   );
