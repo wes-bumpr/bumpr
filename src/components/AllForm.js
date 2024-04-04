@@ -3,8 +3,6 @@ import { Address } from "./Address.js";
 import { AddressTo } from "./AddressTo.js";
 import { Passengers } from "./Passengers.js";
 import React from 'react';
-// import {Link } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
 
 export function AllForm({
   startDate,

@@ -115,6 +115,7 @@ def input_User_ToFirebase():
     doc_ref = db.collection("users").document(request_doc_id)
     doc_ref.set(user_data) # data pushed into firebase
 
+
 def delete_Item_FromFirebase(collection, doc_id):
     """
     Remove ride requests from Firebase ride-request collection

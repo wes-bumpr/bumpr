@@ -4,14 +4,8 @@ import axios from "axios";
 import { Navbar } from "../components/Navbar.js";
 import { AllForm } from "../components/AllForm.js";
 import { RideResult } from "../components/Result.js";
-import { RideRequest } from "../components/Request.js";
 import { GoogleProvider } from "leaflet-geosearch";
 import React from "react";
-import {rideRequest} from "../utils.js";
-import { Link } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
-// import ResultList from "leaflet-geosearch/dist/resultList";
-
 
 export default function Main() {
 
@@ -31,13 +25,14 @@ export default function Main() {
   const [toText, setToText] = React.useState([]);
   const [searchResults, setSearchResults] = React.useState([]);
   const [searchResultsTo, setSearchResultsTo] = React.useState([]);
-  const [isSubmit, setSubmit] = React.useState(false);
-  const [isLoading, setLoading] = useState(true);
   const [startDate, setStartDate] = React.useState(new Date());
   const address = React.useRef(null);
   const toAddress = React.useRef(null);
   const [sAddress, setsAddress] = React.useState('No address selected');
   const [sToAddress, setsToAddress] = React.useState('No address selected');
+  const [isSubmit, setSubmit] = React.useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [profileData, setProfileData] = React.useState(null);
   const [formData, setFormData] = React.useState({
     depart_time: "",
     origin_address: "",
@@ -83,7 +78,6 @@ export default function Main() {
     setDisable(false)
   }
 
-
   function submitHandler() {
     setFormData({
       depart_time: startDate.toLocaleString(),
@@ -97,31 +91,6 @@ export default function Main() {
     });
     setSubmit(true);
   }
-
-  
-
-  const [profileData, setProfileData] = React.useState(null);
-
-
-  // React.useEffect(() => {if (isSubmit) {
-  //   const fetchData = async () => {
-  //     try {
-  //       console.log("form data in main.js" + formData)
-  //       const requestResult = await rideRequest(formData); // Assuming rideRequest returns a Promise
-  //       console.log("request result", requestResult)
-  //       setProfileData(requestResult)
-  //       console.log("request result in main.js" + requestResult)
-  //       console.log("set formData ", formData)
-  //       //setProfileData(requestResult); // Update state with the result of rideRequest
-  //       console.log("setprofiledata" + profileData)
-  //     } catch (error) {
-  //       // Handle errors if necessary
-  //       console.error('Error:', error);
-  //     }
-  //   };
-  //   fetchData();} // Call the async function to fetch data when formData changes
-  // }, [isSubmit]);
-
 
   React.useEffect(() => {
     if (formData.depart_time != "") {
@@ -146,26 +115,16 @@ export default function Main() {
   }
   }, [formData]);
 
-    console.log("HERE IS PROFILE DATA", profileData)
 
   return (
     <>
       <Navbar />
       {isSubmit ? (
-        //   <Link to={{pathname: "/input", state: {formData, profileData}}}><button>
-        //   View Match 
-        // </button>
-        // </Link>
         isLoading ? (
           <div className="App">Loading...</div>
           ) : (
             <RideResult formData={formData} profileData = {profileData} />
           )
-        // isContinue ? (
-        //   <RideRequest formData={formData} />
-        // ) : (
-        //   <RideResult formData={formData} profileData = {profileData} />
-        // ) 
       ) : (
         <AllForm
           startDate={startDate}
