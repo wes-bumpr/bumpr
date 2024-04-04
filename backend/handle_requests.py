@@ -108,13 +108,13 @@ def input_User_ToFirebase():
     """
     # get user email from frontend login page
     user_data = request.get_json()
-    user_ID = user_data['email'].split('@')
+    user_ID = user_data['email'].split('@')[0]
     # Generate a random integer with 5 digits (between 10000 and 99999)
     random_integer = random.randrange(10000, 100000)
     request_doc_id = user_ID + str(random_integer)
     doc_ref = db.collection("users").document(request_doc_id)
     doc_ref.set(user_data) # data pushed into firebase
-
+    return jsonify("push user data to firebase")
 
 def delete_Item_FromFirebase(collection, doc_id):
     """
