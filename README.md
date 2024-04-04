@@ -18,7 +18,14 @@ Firebase
 
 # Communication via Slack: 
 Email dc103@wellesley.edu if you'd like to join our team!
- 
+
+# Launching
+Steps to run everything:
+1. Run the command `pip install python-dot`, if not previously done
+2. Run the command `npm start` in bumpr directory
+3. Open a new terminal
+4. Run the command `npm run start-backend` in the backend directory
+
 # Dependency Management
 Currently, we are using `pipenv` to manage packages. 
 
