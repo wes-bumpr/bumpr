@@ -161,10 +161,6 @@ export function AllForm({
           )}
         </div>
       </div>
-      {/* <Link to="/output"><button>
-              View Match 
-            </button>
-            </Link> */}
     </div>
   );
 }

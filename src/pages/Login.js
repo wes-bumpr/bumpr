@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
-
+import { Navbar } from "../components/Navbar.js";
 
 
 export const Login = () => {
@@ -52,11 +52,16 @@ export const Login = () => {
   }
 
   return (
-    <div>
-      <h2>User Information</h2>
+    <>
+    <Navbar />
+    <div  class="middle">
+      <h2>Welcome to</h2>
+      <h1 class="prompt"> BUMPR!</h1>
+      <h2>Please input your user information:</h2>
+      
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Name:</label>
+          <label>Name:  </label>
           <input
             type="text"
             name="name"
@@ -66,7 +71,7 @@ export const Login = () => {
           />
         </div>
         <div>
-          <label>Email:</label>
+          <label>Email:  </label>
           <input
             type="email"
             name="email"
@@ -76,7 +81,7 @@ export const Login = () => {
           />
         </div>
         <div>
-          <label>Phone:</label>
+          <label>Phone: </label>
           <input
             type="tel"
             name="phone_number"
@@ -86,9 +91,10 @@ export const Login = () => {
             required
           />
         </div>
-        <button type="button" onClick={handleClick}>Submit</button>
+        <button type="button" onClick={handleClick} class="button-style">Submit</button>
       </form>
     </div>
+    </>
   );
 }
 
