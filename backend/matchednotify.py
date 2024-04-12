@@ -8,6 +8,9 @@ from email.mime.multipart import MIMEMultipart
 import ssl
 from email.message import EmailMessage
 
+import ssl
+from email.message import EmailMessage
+
 # Set up Firebase credentials
 cred = credentials.Certificate("bumpr-firebase-service-acckey.json") #TODO: check key
 firebase_admin.initialize_app(cred)
@@ -23,11 +26,13 @@ def get_user_info(user_id):
     doc_ref = db.collection('users').document(user_id)
     return doc_ref.get().to_dict()
 
+
 def get_user_email(user_id):
     doc_ref = db.collection('users').document(user_id)
     user_info = doc_ref.get().to_dict()
     user_email = user_info['email']
     return user_email
+
 
 def get_user_name(user_id):
     doc_ref = db.collection('users').document(user_id)
@@ -35,9 +40,11 @@ def get_user_name(user_id):
     user_name = user_info['name']
     return user_name
 
+
 def get_ride_request_info(ride_request_id):
     doc_ref = db.collection('ride-requests').document(ride_request_id)
     return doc_ref.get().to_dict()
+
 
 def send_email_notification(match):
     # Parse Match dictionary -- as found in firebase.
@@ -76,14 +83,19 @@ def send_email_notification(match):
         # context = ssl.create_default_context()
         # server = smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context)
         # server.starttls()
+        # context = ssl.create_default_context()
+        # server = smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context)
+        # server.starttls()
         server.login(email_address, email_password) # ask ashley
         server.sendmail(email_address, recipient, msg.as_string())
         server.quit()
+
 
 # carpool_ref.listen(send_email_notification)
 def main():
     matchEX = db.collection('matches').document('EjDOXx3H9yUFLmwz25DDVc1FkPEq9BDSApUHLYEV').get().to_dict()
     send_email_notification(matchEX)
+
 
 main()
 
