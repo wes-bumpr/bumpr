@@ -19,10 +19,6 @@ email_address = 'wesbumpr@gmail.com'
 email_password = 'seku lfis hbpi prao' # https://myaccount.google.com/u/3/apppasswords
 #'wesbumpr@2001' - email pwd
 
-email_address = 'wesbumpr@gmail.com'
-email_password = 'seku lfis hbpi prao' # https://myaccount.google.com/u/3/apppasswords
-#'wesbumpr@2001' - email pwd
-
 def get_user_info(user_id):
     doc_ref = db.collection('users').document(user_id)
     return doc_ref.get().to_dict()
