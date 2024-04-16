@@ -48,7 +48,7 @@ export const Login = () => {
         console.log('Response headers:', error.response.headers);
       }
     });
-    navigate('/')
+    navigate('/home')
   }
 
   return (

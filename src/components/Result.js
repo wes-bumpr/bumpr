@@ -10,7 +10,7 @@ export function RideResult({ formData, profileData }) {
           return (
               <div class="prompt mb-5">
                 You did not match with anyone.
-                We will notify you if you receive a new match before your date.
+                <p class="subprompt">We will notify you if you receive a new match before your date.</p>
                 </div>
           )
     } else if (profileData) {
