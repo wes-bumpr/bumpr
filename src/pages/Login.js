@@ -3,6 +3,8 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import { Navbar } from "../components/Navbar.js";
 
+// Import API_URL from apiConfig.js
+import API_URL from './apiConfig';
 
 export const Login = () => {
   const [formData, setFormData] = useState({
