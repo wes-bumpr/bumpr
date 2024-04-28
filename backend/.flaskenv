@@ -1,2 +1,2 @@
-FLASK_APP=handle_requests.py
+FLASK_APP=app.py
 FLASK_ENV=development
