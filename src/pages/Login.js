@@ -38,7 +38,8 @@ export const Login = () => {
   function handleClick() {
     axios({
       method: "POST",
-      url: "/login",
+      //url: "/login",
+      url: `${API_URL}/login`, // Use API_URL as the base URL
       data:
         formData,
     }).catch((error) => {

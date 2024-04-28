@@ -7,6 +7,9 @@ import { RideResult } from "../components/Result.js";
 import { GoogleProvider } from "leaflet-geosearch";
 import React from "react";
 
+// Import API_URL from apiConfig.js
+import API_URL from './apiConfig';
+
 export default function Main() {
 
   const provider = new GoogleProvider({
@@ -96,7 +99,8 @@ export default function Main() {
     if (formData.depart_time != "") {
     axios({
       method: "POST",
-      url: "/ride-request",
+      //url: "/ride-request",
+      url: `${API_URL}/ride-request`, // Use API_URL as the base URL
       data:
         formData,
     }).then(response => {
